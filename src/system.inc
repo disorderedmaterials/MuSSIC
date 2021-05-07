@@ -1,0 +1,47 @@
+C     System.Inc
+
+      character*40 title, broadfn,windowfn,line
+      double precision cutoff,box,bin_width,qmin,qdelta,qmax,
+     &FWHM
+           
+       integer natoms,ntypes,nframes,sizemol,maxnatoms,maxtyp,maxbins,
+     & nbins,wbins,maxnum
+
+      common/ sys1/    cutoff,box,bin_width,qmin,qdelta,qmax,FWHM
+      common/ sys2/    natoms,ntypes,nframes,sizemol,nbins,wbins
+      common/ sys3/    title,broadfn,windowfn,line
+     
+
+C vectors and matrixes sizes
+      parameter (maxnatoms = 10000)   ! max number of atoms
+      parameter (maxtyp = 10)   ! max number of atom types
+      parameter (maxbins = 1000) !max number of histogram bins     
+      parameter (maxnum = 5) ! max number of species
+C physical constants
+      double precision PI
+      parameter (PI = 3.14159 26535 89793 23846 26433 8d00)
+
+      double precision bc(maxtyp),c(maxtyp)
+      common/ sys4/ bc,c
+
+      double precision binr(maxbins),binw(maxbins)
+      common/ sys5/ binr,binw
+
+      integer num_iso,ex(maxtyp),noex,mol(maxtyp),
+     &deut_flag(maxtyp,maxtyp)
+
+      common/ sys6/ num_iso,ex,noex,mol,deut_flag
+      
+      character*10 label_iso(maxtyp,maxtyp),label_ex(maxtyp)
+      double precision natural(maxtyp,maxtyp),isotope(maxtyp,maxtyp),
+     &iso_fraction(maxtyp,maxtyp)
+      
+
+      common/ sys7/ label_iso,label_ex
+
+      common/ sys8/ natural,isotope,iso_fraction
+
+      character*10 label_type(maxtyp)      
+      double precision t1,t2,t3
+      common/ sys9/ label_type
+      common/tt/ t1,t2,t3

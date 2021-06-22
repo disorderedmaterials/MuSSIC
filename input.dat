@@ -1,96 +1,62 @@
 title:
-Methanol-water
-ntypes: 
+C10TAB+water
+ntypes:
 6
-nframes: 
-5
+nframes:
+1
 box_length:
-35.568933044900624
+121.9591  118.6220  120.7794
 bin_width:
 0.03d0
-cutoff: 
-17.759999999999998
+cutoff:
+59.31d0
 label_atom:
+N
+C
+HC
+BR
 OW
 HW
-CT
-HC
-OH
-HO
 scattering_lengths:
-5.803d0
--3.7390d0
+9.36d0
 6.646d0
 -3.739d0
+6.795d0
 5.803d0
 -3.739d0
 6.671d0
 exchangeable_atoms:
-2
-HW
-HO
+0
 number_isotopologues:
-7
+3
 isotopologues:
-sample_1  
+sample_1   HH
 atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       1.0      0.0
+BR       1.0      0.0
+OW       1.0      0.0
+HW       1.0      0.0
+sample_2 HD
+atom    natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       1.0      0.0
+BR       1.0      0.0
 OW       1.0      0.0
 HW       0.0      1.0
-CT       1.0      0.0
-HC       1.0      0.0
-OH       1.0      0.0
-HO       1.0      0.0
-sample_2
-atom	natural   isotope
-OW       1.0      0.0
-HW       1.0      0.0
-CT       1.0      0.0
-HC       1.0      0.0
-OH       1.0      0.0
-HO       0.0      1.0
-sample_3
-atom	natural   isotope
-OW       1.0      0.0
-HW       1.0      0.0
-CT       1.0      0.0
+sample_3 DH
+atom    natural   isotope
+N        1.0      0.0
+C        1.0      0.0
 HC       0.0      1.0
-OH       1.0      0.0
-HO       1.0      0.0
-sample_4
-atom	natural   isotope
-OW       1.0      0.0
-HW       0.0      1.0
-CT       1.0      0.0
-HC       1.0      0.0
-OH       1.0      0.0
-HO       0.0      1.0
-sample_5
-atom	natural   isotope
+BR       1.0      0.0
 OW       1.0      0.0
 HW       1.0      0.0
-CT       1.0      0.0
-HC       0.0      1.0
-OH       1.0      0.0
-HO       0.0      1.0
-sample_6
-atom	natural   isotope
-OW       1.0      0.0
-HW       0.0      1.0
-CT       1.0      0.0
-HC       0.0      1.0
-OH       1.0      0.0
-HO       0.0      1.0
-sample_7
-atom	natural   isotope
-OW       1.0      0.0
-HW       1.0      0.0
-CT       1.0      0.0
-HC       1.0      0.0
-OH       1.0      0.0
-HO       0.5      0.5
 qmin:
-0.1d0
-qdelta: 
+0.05d0
+qdelta:
 0.05d0
 qmax:
 30.0d0

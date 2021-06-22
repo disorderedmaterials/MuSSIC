@@ -3,7 +3,7 @@ c *** define I/O units
 
 c     added type defs for implicit none modules
       integer io00,io0,io1,io2,io3,io4,io5,io6,io7,io8, io9
-      integer io10, io11, io12,io13,io14,io15,io16 
+      integer io10, io11, io12,io13,io14,io15,io16,io66 
 
 
       parameter (io0 = 100)
@@ -29,7 +29,7 @@ c     formatted, sequential
 c     output : unweighted partial  S(Q)               
 c     formatted, sequential
         
-        parameter (io6 = 6)
+        parameter (io66 = 66)
 c     output : unweighted total  S(Q)             
 c     formatted, sequential
         

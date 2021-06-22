@@ -1,21 +1,22 @@
 C     System.Inc
 
       character*40 title, broadfn,windowfn,line
-      double precision cutoff,box,bin_width,qmin,qdelta,qmax,
-     &FWHM
+      double precision cutoff,boxx,boxy,boxz,bin_width,qmin,qdelta,
+     &qmax,FWHM
            
        integer natoms,ntypes,nframes,sizemol,maxnatoms,maxtyp,maxbins,
      & nbins,wbins,maxnum
 
-      common/ sys1/    cutoff,box,bin_width,qmin,qdelta,qmax,FWHM
-      common/ sys2/    natoms,ntypes,nframes,sizemol,nbins,wbins
-      common/ sys3/    title,broadfn,windowfn,line
+      common/ sys1/    cutoff,boxx,boxy,boxz,bin_width,qmin,qdelta,qmax
+      common/ sys2/    FWHM
+      common/ sys3/    natoms,ntypes,nframes,sizemol,nbins,wbins
+      common/ sys4/    title,broadfn,windowfn,line
      
 
 C vectors and matrixes sizes
-      parameter (maxnatoms = 10000)   ! max number of atoms
+      parameter (maxnatoms = 5000000)   ! max number of atoms
       parameter (maxtyp = 10)   ! max number of atom types
-      parameter (maxbins = 1000) !max number of histogram bins     
+      parameter (maxbins = 2000) !max number of histogram bins     
       parameter (maxnum = 5) ! max number of species
 C physical constants
       double precision PI
@@ -32,12 +33,13 @@ C physical constants
 
       common/ sys6/ num_iso,ex,noex,mol,deut_flag
       
-      character*10 label_iso(maxtyp,maxtyp),label_ex(maxtyp)
+      character*10 label_iso(maxtyp,maxtyp),label_ex(maxtyp),
+     &text1(maxtyp),text2(maxtyp)
       double precision natural(maxtyp,maxtyp),isotope(maxtyp,maxtyp),
      &iso_fraction(maxtyp,maxtyp)
       
 
-      common/ sys7/ label_iso,label_ex
+      common/ sys7/ label_iso,label_ex,text1,text2
 
       common/ sys8/ natural,isotope,iso_fraction
 

@@ -4,7 +4,6 @@
       include 'system.inc'
       include 'config.inc'
       include 'control.inc'
-      include 'iochan.h'
 
       double precision ft, deltaX,data1(wbins),data2(nbins),
      &normfactor,omega,oldX(wbins),oldY(wbins),param,broaden,

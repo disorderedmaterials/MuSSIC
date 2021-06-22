@@ -68,7 +68,7 @@ c     number of frames
          goto 1
 c     length of the simulation box
       elseif (line(1:10) .eq. 'box_length') then
-         read (io1, *) box
+         read (io1, *) boxx,boxy,boxz
          ibox=1
          goto 1
 
@@ -77,6 +77,7 @@ c     histogram bin width
          read (io1, *) bin_width
          ibin_width=1
          goto 1
+
  
 
 c     cutoff for the distance calculation
@@ -126,7 +127,7 @@ c    isotpe details in each isotopologue
        elseif(line(1:13).eq.'isotopologues') then
     
           do i = 1,num_iso
-          read(io1,*)        
+          read(io1,*)text1(i),text2(i)        
           read(io1,*)
           
           do j = 1,ntypes

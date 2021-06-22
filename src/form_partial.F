@@ -21,7 +21,7 @@
 
                      lower_shell_limit = 0.0d0
 
-                     number_density = nr(j)/(box**3)
+                     number_density = nr(j)/(boxx*boxy*boxz)
 
         if(i .eq.j) then
         multiplier = 2.0d0

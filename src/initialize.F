@@ -16,9 +16,10 @@
 
           nbins = int(cutoff/bin_width)
 
+
           wbins = idnint((qmax-qmin)/qdelta)
 
-            delta = bin_width+bin_width/2.0d0
+            delta = bin_width/2.0d0
 
             do i = 1,nbins
             binr(i) =  delta

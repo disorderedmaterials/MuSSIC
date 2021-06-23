@@ -318,7 +318,7 @@
 
         do i = 1,wbins
 
-        write(fu1,*)log(binw(i)),d_totalweightedsq(i)
+        write(fu1,*)binw(i),d_totalweightedsq(i)
 
         enddo
               

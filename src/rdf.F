@@ -1,4 +1,18 @@
         subroutine rdf
+c     start_doc
+c     Name
+c       rdf
+c     Usage
+c       call rdf
+c     Description
+c       performs histogram binning for rdf calculation
+c
+c   histogram(atom types,atom types, nbins) = self terms + cross terms 
+c       bound_hist(atom types, atom types, nbins)
+c       unbound_hist(atom types, atom types, nbins)
+c       
+c     end_doc
+
         implicit none
       include 'system.inc'
       include 'config.inc'
@@ -7,7 +21,7 @@
       include 'rdf.inc'
       include 'model.inc'
 
-      integer temp,temp1,temp2,ii,jj,kk,i,j,k,l,bin,beginloop,endloop,
+      integer*8 temp,temp1,temp2,ii,jj,kk,i,j,k,l,bin,bl,el,
      &typeJ,typeK
       double precision Dx,Dy,Dz,distance
 
@@ -23,7 +37,11 @@ c       write(*,*)'self terms'
 
          temp = nr(i)
 
+c$omp parallel 
+c$omp& shared ( i,rr, temp, boxx, boxy, boxz, bin_width, nbins ) 
+c$omp& private ( j,k,Dx,Dy,Dz,distance,bin ) 
 
+c$omp do reduction ( + : histogram )
              do j = 1,temp-1
 
 
@@ -60,31 +78,38 @@ Ccccccccccccccccccccccc
 
              enddo
       
-        enddo
+      
 
         
+c$omp end do
 
+c$omp end parallel
+
+       enddo
+
+      
 c  cross terms
 
 c              write(*,*)'calculating cross terms'
 
-            do ii = 1,ntypes
+            do ii = 1,ntypes-1
 
                    
 
-                do jj = 1,ntypes
+                do jj = ii+1,ntypes
 
 
-                  if(ii.eq.jj) cycle
-
-c                 if(nr(ii).gt.nr(jj)) cycle
-
-c                 if((nr(ii).eq.nr(jj)).and.(ii.gt.jj)) cycle
 
 
                    temp1 = nr(ii)
                    temp2 = nr(jj)
 
+
+c$omp parallel 
+c$omp& shared ( ii,jj,rr, temp, boxx, boxy, boxz, bin_width, nbins ) 
+c$omp& private ( j,k,Dx,Dy,Dz,distance,bin ) 
+
+c$omp do collapse(2)  reduction ( + : histogram )
          do j = 1,temp1
 
 
@@ -114,6 +139,11 @@ Ccccccccccccccccccccccc
 
              enddo
 
+
+c$omp end do
+
+c$omp end parallel
+
              enddo
 
              enddo
@@ -126,23 +156,25 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
 c            write(*,*)'intra molecular pairs'
 
 
-              l = 0
              do i = 1,num
 
 
+c$omp parallel 
+c$omp& shared ( i,nmol,nat,itype,x,y,z,boxx,boxy,boxz,bin_width,nbins) 
+c$omp& private ( j,bl,el,jj,kk,typeJ,typeK,Dx,Dy,Dz,distance,bin ) 
+
+c$omp do  reduction ( + : bound_hist )
                   do j = 1,nmol(i)
 
 
-                      beginloop = l+1
-                      endloop = l + nat(i) 
+                       bl = ((j-1)*nat(i))+1
+                       el = bl+nat(i)
 
-                      l = l + nat(i)
-
-                      do jj = beginloop,endloop-1
+                      do jj = bl,el-1
 
                        typeJ = itype(jj)
 
-                       do kk = jj+1,endloop
+                       do kk = jj+1,el
 
                        typeK = itype(kk)
 
@@ -177,6 +209,11 @@ Ccccccccccccccccccccccc
 
 
           enddo
+
+
+c$omp end do
+
+c$omp end parallel
 
           enddo
 

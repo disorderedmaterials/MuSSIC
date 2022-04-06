@@ -1,20 +1,28 @@
       Program scattering_cg
 
 !    -computes the neutron scattering from an atomistic trajectory.
-!    -reads the input files 'input.dat' and 'model.dat' and the trajectory file 'trajectory' 
-!    -writes the output to the files named as per the title provided in the input
+!    -reads the input files 'input.dat', 'model.dat' and the trajectory file 'trajectory' 
+!    -writes the output to the files named as provided in  the input file
 !
-!     input files:   input.dat  (main input file)
-!                    model.dat (model file with system description)
-!                    trajectory (trajectory in xyz format)
+!     input files:  - input.dat  (main input file containing data like atom types,
+!     box dimensions, isotopologues, scattering lengths and binwidth and
+!     binrange)
+!                   - model.dat (model file with system description like
+!                    number of molecules, sequence of atoms in each
+!                    molecule ) 
+!                   - trajectory (trajectory in xyz format)
 !     Output files: 
 !                    ***-unweighted.gr   (unweighted partial pair distribuion functions)
 !                    ***-unweighted.sq   (unweighted partial pair structure factor)
 !                    unweighted-total.sq (total unweighted structure factor) 
 !                    ***-weighted.sq     (weighted partial pair strucutre factor)
-!                    weighted-total.sq   (total weighted structure factor)
+!                    ###-weighted-total.sq   (total weighted structure factor)
 !                    ***-weighted.gr     (weighted partial pair distribution function) 
 !                    weighted-total.gr   (total weighted radial distribution function)
+!
+!                 (*** indicate all pairs of atomtypes in the system description)
+!                 (### indicate the isotopologue given in the input.dat)
+!                               
 
                      
       implicit none
@@ -24,11 +32,23 @@
       include 'rdf.inc'
       include 'sq.inc'
       include 'neutronsq.inc'
-
+      include 'omp_lib.h'
 
 
       double precision elapsetime1,elapsetime2
-      integer istep
+      integer*8 istep,id
+
+cc$omp parallel
+cc$omp& private ( id )
+cc
+cc  Have each thread say hello.
+cc
+c      id = omp_get_thread_num ( )
+c      write ( *, '(a,i8)' ) '  Hello from process ', id
+
+cc$omp end parallel
+
+c      stop
 
       istop=0
 
@@ -69,7 +89,10 @@ c initialize values and vectors needed for the calculation
              
       call CPU_TIME(t2)
 
-      write(io7,*)'Scattering_calculation_CG version: 1 (11-05-2021) '
+c  Main loop over number of frames start here
+
+      write(io7,*)'Scattering calculation for atomistic system
+     & (06-04-2022) '
 
      
       do istep = 1,nframes
@@ -77,7 +100,6 @@ c initialize values and vectors needed for the calculation
 c read configuration from the trajectory file      
       call rdtraj
 
-        
 c     stops if the trajectory file is unavailable/incorrect
       if (istop.gt.0) then
           stop
@@ -86,8 +108,6 @@ c     stops if the trajectory file is unavailable/incorrect
 c   populate the histogram bin for radial distribution function
 
       call rdf
-
-      
 
       enddo
 

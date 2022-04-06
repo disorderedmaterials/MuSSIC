@@ -1,5 +1,20 @@
-         subroutine neutronsq
-           implicit none
+      subroutine neutronsq
+c     start_doc
+c     Name
+c       neutronsq
+c     Usage
+c       call neutronsq
+c     Description
+c       
+c      multiplies partial S(Q) with appropriate weighting factor 
+c      Weighting factors are computed according to the isotopologue
+c      The bound partial S(Q) are multiplied by those weights seperately
+c      and then combined with unbound partial S(Q) to form total
+c      weighted  S(Q)
+c
+c     end_doc
+
+      implicit none
       include 'system.inc'
       include 'model.inc'
       include 'config.inc'
@@ -9,28 +24,30 @@
       include 'sq.inc'
       include 'neutronsq.inc'
 
-           integer i,j,k
+           integer*8 i,j,k
 
        double precision multiplier,norm,data_1(wbins),data_2(nbins),
-     & bcd(ntypes),bj,bk
+     & bcd(ntypes),bj,bk,print_weight(ntypes,ntypes),
+     & print_intra(ntypes,ntypes)
 
            character(len=10) file_id,label1,label2
            character(len=100) file_name,file_name1,file_name2
-           integer fu,fu1,fu2,deu_step,temp,typej,typek,file_cnt
+           integer*8 fu,fu1,fu2,deu_step,temp,typej,typek,file_cnt
             double precision wt_factor, total_num
 
+c   concentration of the atom types            
 
           do i = 1,ntypes
           c(i) = dble(nr(i))/dble(natoms)
           enddo
 
+c    opens the files according to the isotopologue name
+
                do deu_step = 1,num_iso
 
                  file_id = text2(deu_step)
 
-                  
-
-
+                 
       file_name1= trim(adjustl(file_id)) // '-weighted-total'// '.sq'
 
       file_name2= trim(adjustl(file_id)) // '-weighted-total'// '.gr'
@@ -55,12 +72,16 @@
 
                  do j = 1,ntypes
 
+                 print_weight(i,j) = 0.0d0
+                 print_intra(i,j) = 0.0d0
                  intra_weight(i,j)= 0.0d0
                  intra_norm(i,j) = 0.0d0
 
                  enddo
 
                  enddo
+
+c    compute the scattering length density of the atom type from isotope ratio              
 
 
                  do i = 1,ntypes
@@ -74,6 +95,8 @@
             endif
                  enddo
 
+
+c change the scattering length density if there are exchangeables                 
 
                  wt_factor = 0.0d0
                   total_num = 0.0d0
@@ -92,7 +115,8 @@
                     if(ex(i).eq.1) bcd(i) = wt_factor/total_num
 
                     enddo
-                  
+
+c  compute the weight for intra molecular contribution                     
 
 
            do i = 1,num
@@ -112,6 +136,7 @@
 
              bk = bcd(typek)
 
+c              write(io7,*)'intra',text2(deu_step),j,k,bj,bk
 
              if(intra_flag(typej,typek).eq.0) cycle
 
@@ -125,6 +150,8 @@
             enddo
 
             enddo
+
+            
 
             else
 
@@ -155,7 +182,7 @@
 
              if(intra_flag(typej,typek).eq.0) cycle
 
-
+c             write(io7,*)'intra',text2(deu_step),j,k,bj,bk
              intra_weight(typej,typek) = intra_weight(typej,typek)+
      & (nmol(i)*(1.0d0-iso_fraction(deu_step,i))*bj*bk)
              intra_norm(typej,typek) = intra_norm(typej,typek) +
@@ -203,6 +230,7 @@
              if(intra_flag(typej,typek).eq.0) cycle
 
 
+c             write(io7,*)'intra',text2(deu_step),j,k,bj,bk
              intra_weight(typej,typek) = intra_weight(typej,typek)+
      & (nmol(i)*iso_fraction(deu_step,i)*bj*bk)
              intra_norm(typej,typek) = intra_norm(typej,typek) +
@@ -217,6 +245,9 @@
             endif
 
             enddo
+
+
+c  normalize the intra_molecular weighting factor
 
 
             do i = 1,ntypes
@@ -238,7 +269,9 @@
              enddo
 
 
+c   multipliy the partial S(Q)s with the weighting factors seperately
 
+        write(io7,*)'ci,bi'
 
          do i = 1,ntypes
 
@@ -251,7 +284,18 @@
                          multiplier = 2.0d0
                   endif
                
+                  print_weight(i,j) = print_weight(i,j) +
+     & c(i)*c(j)*bcd(i)*bcd(j)*multiplier
+
+                  print_intra(i,j) = print_intra(i,j) + 
+     & intra_weight(i,j)*multiplier
+
+
+           write(io7,*)text2(deu_step),i,j,c(i),c(j),bcd(i),bcd(j)
+
                   do k = 1,wbins
+
+ 
 
         d_weightedsq(i,j,k)=(unbound_partialsq(i,j,k)*c(i)*c(j)*bcd(i)
      &*bcd(j)+bound_partialsq(i,j,k)*intra_weight(i,j))*multiplier
@@ -260,7 +304,7 @@
 
         d_unbound_wsq(i,j,k)=d_weightedsq(i,j,k)-d_bound_wsq(i,j,k)
 
-        if(i.ge.j) then
+        if(i.le.j) then
        d_totalweightedsq(k) = d_totalweightedsq(k) + d_weightedsq(i,j,k)
          endif
                   enddo
@@ -282,11 +326,18 @@
 
                   enddo
 
+c  write the weighting matrix to log file     
+c write the weighted partial S(Q) to a file              
+
                  file_cnt = 0
+
+                 write(io7,*)'weight matrix(i,j)'
 
          do i = 1,ntypes
          do j = 1,ntypes
 
+
+         write(io7,*)i,j,print_weight(i,j),print_intra(i,j)
 
           if(i.gt.j) cycle
 
@@ -321,6 +372,8 @@
         write(fu1,*)binw(i),d_totalweightedsq(i)
 
         enddo
+
+c   back Fourier transform to obtain G(r) from total S(Q)        
               
            norm = 1.0d0/(2.0d0*PI*PI*(dble(natoms)/(boxx*boxy*boxz)))
 

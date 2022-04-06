@@ -24,7 +24,7 @@ c     end_doc
       include 'control.inc'
       include 'model.inc' 
      
-      integer i,j,inum,inat,inmol,ilabel
+      integer*8 i,j,inum,inat,inmol,ilabel
 
         inum = 0
         inat = 0

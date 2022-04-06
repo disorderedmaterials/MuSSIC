@@ -19,7 +19,7 @@ c     end_doc
       include 'iochan.h'
       include 'model.inc'
 
-      integer temp,i,j,l,ii,jj
+      integer*8 temp,i,j,l,ii,jj
 
 
 C********************************

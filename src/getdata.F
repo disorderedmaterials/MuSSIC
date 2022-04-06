@@ -24,7 +24,7 @@ c     end_doc
       include 'iochan.h'
       include 'control.inc'
      
-      integer intypes,inframes,icutoff,ibox,ibin_width,isizemol,iqmin,
+      integer*8 intypes,inframes,icutoff,ibox,ibin_width,isizemol,iqmin,
      &iqdelta,iqmax,ibroadening,iFWHM,iwindowfn,ilabel,iex,ibc,i,j,
      &inum_iso
      

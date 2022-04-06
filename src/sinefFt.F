@@ -7,11 +7,11 @@
       include 'iochan.h'
     
 
-        double precision data1(nbins),data2(wbins),normfactor
+        double precision data1(nbins),data2(wbins+1),normfactor
         double precision ft,deltaX,omega,oldX(nbins),oldY(nbins),param,
      &broaden,newX(wbins),newY(wbins),wind,wstep,omegamax
 
-        integer m,nX,cnt,n_bins
+        integer*8 m,nX,cnt,n_bins
         character*40 broadening
         character*40 window
 

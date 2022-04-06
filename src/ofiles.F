@@ -10,7 +10,7 @@ c       call ofiles
 c
 c     Description
 c       Open all input and output files 
-c       are there
+
 c       includes 
 c       file `iochan.h'.
 c       file `control.inc'.
@@ -48,7 +48,7 @@ c      endif
 
 
 
-c   .... 1 input data       
+c   .... 1 input.dat       
 
       open (unit = io1, file = 'input.dat',  status = 'OLD',
      $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
@@ -56,6 +56,8 @@ c   .... 1 input data
          write (io7,*) '* FATAL (ofile) input data file does not exist'
          istop=1
       endif
+
+c   .... 2  model.dat
 
        open (unit = io00, file = 'model.dat',  status = 'OLD',
      $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
@@ -65,7 +67,7 @@ c   .... 1 input data
       endif
 
 
-c     ... 2 trajectory file 
+c     ... 3 trajectory file 
 
       open (unit = io2, file = 'trajectory',  status = 'OLD',
      $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
@@ -79,57 +81,13 @@ c     ... 2 trajectory file
 
 
 
-c     ... 3 partial unweighted g(r)
-
-c      open (unit = io3, file = 'unweighted.gr',  status = 'UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
 
 c     ... 4 total unweighted g(r) 
       open (unit = io4,file = 'unweighted-total.gr',status = 'UNKNOWN',
      $      access = 'SEQUENTIAL', form = 'FORMATTED')
 
-c     ... 5 partial unweighted S(Q)
-c      open (unit = io5, file = 'unweighted.sq',  status = 'UNKNOWN',
-c     $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c     ... 6 total unweighted S(Q)  
+c     ... 5 total unweighted S(Q)  
       open (unit=io66, file = 'unweighted-total.sq',status = 'UNKNOWN',
      $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c     ... 8 partial weighted S(Q)  
-c      open (unit = io8, file = 'weighted.sq',status = 'UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c     ... 9 total weighted S(Q)  
-c      open (unit = io9, file = 'weighted_total.sq',status = 'UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c     ... 10 total weighted G(r)
-c      open (unit=io10,file='weighted_total.gr',status='UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c     ... 11 partial weighted S(Q) - deuterated
-c      open (unit=io11,file = 'deut_weighted.sq',status='UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c     ... 12 total weighted S(Q)  - deuterated
-c      open (unit=io12,file='deut_weighted_total.sq',status='UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c     ... 13 total weighted G(r)  - deuterated
-c      open (unit=io13,file='deut_weighted_total.gr',status='UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c     ... 14 partial weighted S(Q)  - mixed
-c      open (unit=io14,file='mix_weighted.sq',status='UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c     ... 15 total weighted S(Q) - mixed
-c      open (unit=io15,file = 'mix_weighted_total.sq',status='UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-cc     ... 16 total weighted G(r)  - mixed
-c      open (unit=io16,file='mix_weighted_total.gr',status='UNKNOWN',
-c     $      access = 'SEQUENTIAL', form = 'FORMATTED')
 
        end

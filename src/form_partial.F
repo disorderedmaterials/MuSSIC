@@ -12,7 +12,7 @@
         double precision data1(maxtyp,maxtyp,maxbins),
      & data2(maxtyp,maxtyp,maxbins)
 
-        integer i,j,k
+        integer*8 i,j,k
 
 
               do i = 1,ntypes

@@ -4,7 +4,7 @@ C     Config.Inc
 C     Information about configuration 
 C
 C
-      integer itype(maxnatoms),nr(maxtyp)
+      integer*8 itype(maxnatoms),nr(maxtyp)
       character*10 label_atom(maxnatoms)
       double precision x(maxnatoms),y(maxnatoms),z(maxnatoms)
      &,rr(maxtyp,maxnatoms,3)

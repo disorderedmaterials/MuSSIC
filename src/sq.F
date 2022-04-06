@@ -1,4 +1,13 @@
         subroutine sq
+c     start_doc
+c     Name
+c       sq
+c     Usage
+c       call sq
+c     Description
+c       performs the Fourier transfom on partial g(r) to obtain partial S(Q)
+c     end_doc
+
         implicit none
 
       include 'system.inc'
@@ -8,21 +17,20 @@
       include 'rdf.inc'
       include 'sq.inc'
 
-      integer i,j,k,file_cnt,fu
+      integer*8 i,j,k,file_cnt,fu
       character*10 label1,label2
       character*100 file_name
       double precision data_1(nbins),data_2(nbins),data_3(nbins),
-     & data_4(wbins),data_5(wbins),data_6(wbins),norm
+     & data_4(wbins+1),data_5(wbins+1),data_6(wbins+1),norm
+
+
+c  normalization factor      
 
 
         norm  = 4.0d0*PI*(dble(natoms)/(boxx*boxy*boxz))
 
             do i = 1,ntypes
                do j = 1,ntypes
-
-c              if(nr(i).gt.nr(j)) cycle
-
-c                 if((nr(i).eq.nr(j)).and.(i.gt.j)) cycle
 
 
                   do k = 1,nbins-1
@@ -36,6 +44,8 @@ c                 if((nr(i).eq.nr(j)).and.(i.gt.j)) cycle
 
 
                   enddo
+
+c  performs Fourier transform of partial g(r) to compute partial S(Q)
 
 
          call sinefFT(data_1,data_4,norm,broadfn,windowfn)
@@ -54,10 +64,12 @@ c                 if((nr(i).eq.nr(j)).and.(i.gt.j)) cycle
                   enddo
                   enddo
 
-
+c summation of partial S(Q) to form total S(Q)
 
 
        call form_total(partialsq,totalsq,wbins)
+
+c writes the partial S(Q) to a file named after the atom types       
 
 
         file_cnt = 0

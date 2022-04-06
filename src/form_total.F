@@ -11,7 +11,7 @@
         double precision data1(maxtyp,maxtyp,maxbins),
      & data2(maxbins)
 
-        integer i,j,k,n_bins
+        integer*8 i,j,k,n_bins
 
          
 

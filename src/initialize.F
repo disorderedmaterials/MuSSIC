@@ -1,4 +1,15 @@
       subroutine initialize
+c     start_doc
+c     Name
+c       initialize
+c     Usage
+c       call initialize
+c     Description
+c       initializes  parameters and arrays for RDF caluclation
+c       defines the bins for histogram binning
+c
+c     end_doc
+
       implicit none
       include 'system.inc'
       include 'model.inc'
@@ -9,15 +20,18 @@
       include 'sq.inc'
       include 'neutronsq.inc'
 
-      integer i,j,k,typej,typek,temp
+      integer*8 i,j,k,typej,typek,temp
          double precision delta
 
-
+c   number of bins for rdf calculation
 
           nbins = int(cutoff/bin_width)
 
+c   number of bins in Q-space        
 
           wbins = idnint((qmax-qmin)/qdelta)
+
+c   define the bin values for rdf calculation          
 
             delta = bin_width/2.0d0
 
@@ -27,6 +41,7 @@
             enddo
 
            
+c   define the bin values for Q-space
 
             delta = qmin
             do i = 1,wbins
@@ -34,8 +49,11 @@
             delta = delta + qdelta
             enddo
 
+          
+            
 
-c initialisation of arrays
+
+c initialisation of arrays for histogram binning
 
        do i = 1,ntypes
 
@@ -44,21 +62,34 @@ c initialisation of arrays
 
           intra_flag(i,j) = 0
 
-          do k = 1,nbins
+            do k = 1,nbins
 
           histogram(i,j,k) = 0.0d0
           bound_hist(i,j,k) = 0.0d0
           unbound_hist(i,j,k) = 0.0d0
           totalgr(k) = 0.0d0
-          enddo
+            enddo
 
-           do k = 1,wbins
+            do k = 1,wbins
            totalsq(k) = 0.0d0
-           enddo
+            enddo
 
-          enddo
          enddo
 
+       enddo
+
+
+              do i = 1,wbins
+             totalweightedsq(i) = 0.0d0
+              enddo
+
+              do i = 1,nbins
+              totalweightedgr(i) = 0.0d0
+              enddo
+
+
+
+c    check for the exchangeables and mark the array 'ex(atom type)' as '1'
 
 
               do i = 1,ntypes
@@ -73,23 +104,13 @@ c initialisation of arrays
 
                    enddo
 
-             enddo
-
-
-
-              do i = 1,wbins
-             totalweightedsq(i) = 0.0d0
-              enddo
-
-              do i = 1,nbins
-              totalweightedgr(i) = 0.0d0
               enddo
 
 
 
-                
              
-
+c  Label the atoms that belong to same molecule. This helps computing
+c  the rdf correlations due to intramolecular atoms    
 
                    do i = 1,num
 
@@ -143,7 +164,7 @@ c initialisation of arrays
 
                             enddo
 
-                
+c   Assign  the  values of ratio of isotope to that atom type                 
 
                 do i = 1,num_iso
 
@@ -175,10 +196,6 @@ c initialisation of arrays
                 enddo
 
                 enddo
-
-
-
-
 
 
               

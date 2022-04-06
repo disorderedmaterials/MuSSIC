@@ -3,13 +3,13 @@ C10TAB+water
 ntypes:
 6
 nframes:
-1
+5
 box_length:
-121.9591  118.6220  120.7794
+159.6606d0  153.7097d0  155.2160d0
 bin_width:
 0.03d0
 cutoff:
-59.31d0
+76.83d0
 label_atom:
 N
 C
@@ -28,7 +28,7 @@ scattering_lengths:
 exchangeable_atoms:
 0
 number_isotopologues:
-3
+8
 isotopologues:
 sample_1   HH
 atom	natural   isotope
@@ -38,28 +38,68 @@ HC       1.0      0.0
 BR       1.0      0.0
 OW       1.0      0.0
 HW       1.0      0.0
-sample_2 HD
-atom    natural   isotope
+sample_2   DD
+atom	natural   isotope
 N        1.0      0.0
 C        1.0      0.0
-HC       1.0      0.0
+HC       0.0      1.0
 BR       1.0      0.0
 OW       1.0      0.0
 HW       0.0      1.0
-sample_3 DH
-atom    natural   isotope
+sample_3   DH
+atom	natural   isotope
 N        1.0      0.0
 C        1.0      0.0
 HC       0.0      1.0
 BR       1.0      0.0
 OW       1.0      0.0
 HW       1.0      0.0
+sample_4   HD
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       1.0      0.0
+BR       1.0      0.0
+OW       1.0      0.0
+HW       0.0      1.0
+sample_5   50H
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       0.5      0.5
+BR       1.0      0.0
+OW       1.0      0.0
+HW       1.0      0.0
+sample_6   75H
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       0.25     0.75
+BR       1.0      0.0
+OW       1.0      0.0
+HW       1.0      0.0
+sample_7   25D
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       0.75     0.25
+BR       1.0      0.0
+OW       1.0      0.0
+HW       0.0      1.0
+sample_8   H25
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       1.0      0.0
+BR       1.0      0.0
+OW       1.0      0.0
+HW       0.75     0.25
 qmin:
-0.05d0
+0.01d0
 qdelta:
-0.05d0
+0.02d0
 qmax:
-30.0d0
+5.0d0
 broadening:
 OmegaDependentGaussian
 FWHM:

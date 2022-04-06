@@ -1,7 +1,8 @@
 #FCOMPFLAGS    =	-O0 -g -C -fpe0 -D nb_num -traceback
 #FCOMPFLAGS    =	-O2  -g -C -fpe0 -traceback -check noarg_temp_created 
+FCOMPFLAGS    =	-O2 
 # FCOMPFLAGS    =	-Os -march=native 
-FCOMPFLAGS    =	-Os
+#FCOMPFLAGS    =	-Os -fcheck= -fbounds
 #FCOMPFLAGS    =	 -pg -tpp7 -O3  -align  -axN -tpp7 
 #FCOMPFLAGS    =	 -pg  -O2  
 # CCOMPFLAGS    =	-Os -march=native
@@ -11,8 +12,8 @@ FFLAGS        =	$(FCOMPFLAGS)
 CFLAGS        = $(CCOMPFLAGS)
 LDFLAGS       =	$(FCOMPFLAGS)
 
-LD            =	gfortran
-FC            = gfortran
+LD            =	gfortran -fopenmp
+FC            = gfortran -fopenmp
 
 MAKEFILE      =	Makefile
 PROGRAM       =	scattcg 

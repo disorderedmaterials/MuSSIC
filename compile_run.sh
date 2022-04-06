@@ -75,10 +75,38 @@ fi
 cd ..
 cd ..
 
-### Tests successful, continue running the code
-echo "main code running for the current input"
+### Tests successful, continue running the code for atomisitc trajectory
+echo " scattering calculation for atomistic trajectory "
 
 ./scattcg
+
+echo " completed "
+
+### test for CG trajectory
+echo "Performing CG test for the given CG input"
+
+mkdir CG_test
+mkdir CG_test/test1
+
+
+cp scattcg CG_test/test1/.
+cp trajectory CG_test/test1/.
+cp cg_map1.dat CG_test/test1/.
+cp cg_model.dat CG_test/test1/.
+cp cg_input.dat CG_test/test1/.
+
+
+
+cd CG_test/test1/
+
+
+./scattcg
+
+echo " CG_Test completed "
+
+
+
+
 
 
 

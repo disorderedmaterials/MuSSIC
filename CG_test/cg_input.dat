@@ -1,0 +1,111 @@
+title:
+C10TAB+water
+ntypes:
+6
+nframes:
+1
+box_length:
+159.6606d0  153.7097d0  155.2160d0
+bin_width:
+0.03d0
+cutoff:
+76.85485d0
+label_atom:
+N
+C
+HC
+BR
+OW
+HW
+scattering_lengths:
+9.36d0
+6.646d0
+-3.739d0
+6.795d0
+5.803d0
+-3.739d0
+6.671d0
+exchangeable_atoms:
+0
+form_factor:
+Gaussian
+number_isotopologues:
+8
+isotopologues:
+sample_1   HH
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       1.0      0.0
+BR       1.0      0.0
+OW       1.0      0.0
+HW       1.0      0.0
+sample_2   DD
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       0.0      1.0
+BR       1.0      0.0
+OW       1.0      0.0
+HW       0.0      1.0
+sample_3   DH
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       0.0      1.0
+BR       1.0      0.0
+OW       1.0      0.0
+HW       1.0      0.0
+sample_4   HD
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       1.0      0.0
+BR       1.0      0.0
+OW       1.0      0.0
+HW       0.0      1.0
+sample_5   50H
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       0.5      0.5
+BR       1.0      0.0
+OW       1.0      0.0
+HW       1.0      0.0
+sample_6   75H
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       0.25      0.75
+BR       1.0      0.0
+OW       1.0      0.0
+HW       1.0      0.0
+sample_7   25D
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       0.75      0.25
+BR       1.0      0.0
+OW       1.0      0.0
+HW       0.0      1.0
+sample_8   H25   
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       1.0      0.0
+BR       1.0      0.0
+OW       1.0      0.0
+HW       0.75     0.25
+qmin:
+0.01d0
+qdelta:
+0.02d0
+qmax:
+5.0d0
+broadening:
+OmegaDependentGaussian
+FWHM:
+0.02d0
+windowfn:
+Lorch0
+endinput

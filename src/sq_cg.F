@@ -1,43 +1,45 @@
-        subroutine sq
-
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc                
+        subroutine sq_cg
+        implicit none
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     start_doc
 c     Name
-c       sq
+c       sq_cg
 c     Usage
-c       call sq
+c       call sq_cg
 c     Description
 c       performs the Fourier transfom on partial g(r) to obtain partial S(Q)
 c     end_doc
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-        implicit none
 
       include 'system.inc'
       include 'config.inc'
       include 'control.inc'
       include 'iochan.h'
+      include 'model.inc'
       include 'rdf.inc'
       include 'sq.inc'
 
       integer*8 i,j,k,file_cnt,fu
       character*10 label1,label2
       character*100 file_name
-      double precision data_1(nbins),data_2(nbins),data_3(nbins),
-     & data_4(wbins+1),data_5(wbins+1),data_6(wbins+1),norm
+      double precision data_1(max_binr),data_2(max_binr),
+     &data_3(max_binr),data_4(maxbins),data_5(maxbins),data_6(maxbins),
+     &norm
 
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-c  normalization factor      
+cccccccccccccccccccccccc
+c   normalization factor 
 
 
         norm  = 4.0d0*PI*(dble(natoms)/(boxx*boxy*boxz))
 
-            do i = 1,ntypes
-               do j = 1,ntypes
+  
+            do i = 1,bead_types
+               do j = 1,bead_types
 
-                if(i.gt.j) cycle
 
-                  do k = 1,nbins-1
+
+                  do k = 1,max_binr-1
 
          partialgr(i,j,k) = partialgr(i,j,k) - 1.0d0
          unbound_partialgr(i,j,k) = unbound_partialgr(i,j,k) - 1.0d0
@@ -48,10 +50,8 @@ c  normalization factor
 
 
                   enddo
-
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-c  performs Fourier transform of partial g(r) to compute partial S(Q)
-
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c  Fourier transform of partial g(r)  to compute partial S(Q)                  
 
          call sinefFT(data_1,data_4,norm,broadfn,windowfn)
          call sinefFT(data_2,data_5,norm,broadfn,windowfn)
@@ -68,28 +68,28 @@ c  performs Fourier transform of partial g(r) to compute partial S(Q)
 
                   enddo
                   enddo
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccc
+c   summing the partial S(Q) to get total F_CG(Q)                  
+
+       call form_total_cg(partialsq,totalsq,wbins)
+
 ccccccccccccccccccccccccccccccccccccccccccccccccc
-c summation of partial S(Q) to form total S(Q)
-
-
-       call form_total(partialsq,totalsq,wbins,ntypes)
-
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc       
-c writes the partial S(Q) to a file named after the atom types       
-
+c   write partial S(Q) and total F_CG(Q) to files       
 
         file_cnt = 0
 
-       do i = 1,ntypes
+       do i = 1,bead_types
 
-          do j = 1,ntypes
+          do j = 1,bead_types
 
           if(i.gt.j) cycle
 
-          label1 = label_type(i)
-          label2 = label_type(j)
+          label1 = label_bead(i)
+          label2 = label_bead(j)
 
-       file_name = 'unweighted-' // trim(adjustl(label1)) //
+       file_name = 'CG-unweighted-' // trim(adjustl(label1)) //
      &  '-'  //  trim(adjustl(label2)) // '.sq'
 
                 file_cnt = file_cnt + 1
@@ -112,13 +112,10 @@ c writes the partial S(Q) to a file named after the atom types
         enddo
         enddo
 
-ccccccccccccccccccccccccccc
-c write the values to file 
-
 
       do i = 1,wbins
 
-      write(io16,*)binw(i),totalsq(i)
+      write(io26,*)binw(i),totalsq(i)
 
       enddo
 

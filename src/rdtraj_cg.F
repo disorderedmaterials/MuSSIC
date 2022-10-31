@@ -1,5 +1,5 @@
-      subroutine rdtraj 
-ccccccccccccccccccccccccccccccccccccccccccccc
+      subroutine rdtraj_cg 
+ccccccccccccccccccccccccccccccccccccccccccccccc
 c     start_doc
 c     Name
 c       rdtraj  
@@ -12,7 +12,7 @@ c       comment line: frame number
 c       atom_label       x  y  z  in Angstroms
 c        label_atom(l) x(l) y(l) z(l) 
 c     end_doc
-cccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccc
 
       implicit none
       include 'system.inc'
@@ -31,40 +31,32 @@ C**** Read- trajectory file *****
 C********************************
 C**** Read configuration data ***
 
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc        
-c read number of atoms
-        read(io2,*)natoms
+
+c read number of beads
+        read(io3,*)natoms
         if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
-        read(io2,*)boxx,boxy,boxz
+        read(io3,*)boxx,boxy,boxz
         else
-        read(io2,*)
+        read(io3,*)
         endif
 
-        l = 0
-        do ii = 1,num
-
-             do jj = 1,nmol(ii)
-
-c loop over number of atoms to read x, y and z cordinates
-        do i = 1,nat(ii)
-        l = l + 1
-        read(io2,*)label_atom(l),x(l),y(l),z(l)
-
+      
+c loop over number of beads to read x, y and z cordinates
+        do i = 1,natoms
+        
+        read(io3,*)label_atom(i),x(i),y(i),z(i)
+        
         enddo
 
-        enddo
-
-        enddo
-
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc          
-c initialize the nr to zeros ( matrix giving the number of atoms per atom type)  
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c initialize the nr to zeros ( matrix giving the number of beads per  bead type)  
 
         do i = 1,maxtyp
         nr(i) = 0
         enddo
-
-        if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt') then
-
+          
+           if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt') then
+ccccccccccccccccccccccc
 c  computing the cutoff
 
           minimum = boxy
@@ -77,12 +69,13 @@ c  computing the cutoff
 
         cutoff =  minimum -  mod(minimum,bin_width)
 
-ccccccccccccccccccccccccccccccccccccccc
+cccccccccccccccccccccccccccccccccccccc
 c   number of bins for rdf calculation
 
           nbins = int(cutoff/bin_width)
 
-          if(nbins.gt.max_binr) max_binr = nbins
+
+          if(nbins.ge.max_binr) max_binr = nbins
 
           do i = 1, max_binr
           frame(i)= frame(i) + 1
@@ -90,39 +83,33 @@ c   number of bins for rdf calculation
 
          endif
 cccccccccccccccccccccccccccccccccccccccccccccccccccccc
-c prepare coordinate matrix according to the atom type
+c prepare coordinate matrix according to the bead type
 
          do i = 1,natoms
 
-              do j = 1,ntypes
+              do j = 1,bead_types
 
-              if(label_atom(i).eq.label_type(j)) then
-
+              if(label_atom(i).eq.label_bead(j)) then
                    itype(i)=j
                                 
                nr(j) = nr(j) + 1
 
                temp = nr(j)
-c matrix rr(atom type 'i',nunber of atoms of type 'i', position coordinate)
+c matrix rr(bead type 'i',nunber of beads of type 'i', position coordinate)
               rr(j,temp,1) = x(i)
               rr(j,temp,2) = y(i)
               rr(j,temp,3) = z(i)
 
-
-
               endif
-
-
 
             enddo
 
         enddo
 
 
-
-
-c        write(io7,*)'reading atomistic trajectory'
-
-    
+c        do i = 1,bead_types
+c        write(io7,*)'natoms:',natoms,'bead type',i,'no. of beads',nr(i)
+c        enddo
         
+ 
       end 

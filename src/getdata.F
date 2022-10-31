@@ -1,5 +1,7 @@
       subroutine getdata
 
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+
 c     start_doc
 c     Name
 c       getdata
@@ -16,17 +18,20 @@ c*******************************************
 c     then writes the header of the output file
 c     Imported
 c     
-c     end_doc 
+c     end_doc
+ccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       implicit none
       include 'system.inc'
       include 'model.inc'
       include 'iochan.h'
       include 'control.inc'
+
+      
      
       integer*8 intypes,inframes,icutoff,ibox,ibin_width,isizemol,iqmin,
      &iqdelta,iqmax,ibroadening,iFWHM,iwindowfn,ilabel,iex,ibc,i,j,
-     &inum_iso
+     &inum_iso,ibinning,iensemble,iFF_label
      
   
       intypes = 0
@@ -45,13 +50,25 @@ c     end_doc
       iex = 0
       ibc = 0
       inum_iso = 0
-      
+      ibinning = 0
+      iensemble = 0
+      iFF_label = 0
 
 1     read (io1, '(a80)', end = 100, 
      $err = 900) line
 
+c     run type
+      if (line(1:3) .eq. 'run') then
+         read(io1,*) run_type
+         goto 1
+
+c     number of processors
+      elseif (line(1:5) .eq. 'nproc') then
+         read(io1,*) nproc
+         goto 1
+
 c     title
-      if (line(1:5) .eq. 'title') then
+      elseif (line(1:5) .eq. 'title') then
          read(io1,*) title
          goto 1
 
@@ -79,12 +96,14 @@ c     histogram bin width
          goto 1
 
  
+c     type of ensemble for reading the trajectory: NPT or NVT         
 
-c     cutoff for the distance calculation
-      elseif (line(1:6) .eq. 'cutoff') then
-         read (io1, *) cutoff
-         icutoff=1
-         goto 1
+      elseif(line(1:8).eq.'ensemble') then
+
+          read(io1,*)ensemble_type
+          iensemble = 1
+          goto 1
+
 
 c     label of the atoms
               
@@ -114,6 +133,12 @@ c     exchangeableatom type
          read (io1, *)label_ex(i)
          enddo
          iex = 1
+         goto 1
+c     form factor
+
+      elseif (line(1:11) .eq. 'form_factor') then
+         read(io1,*)FF_label
+         iFF_label = 1
          goto 1
 
 c     number of isotopologues         
@@ -152,6 +177,17 @@ c     maximum value of Q range
       elseif (line(1:4) .eq. 'qmax') then
          read (io1, *) qmax
          iqmax=1
+         goto 1
+
+c     maximum value of Q range
+       elseif (line(1:7) .eq. 'binning') then
+         read (io1, *) bin_type
+         ibinning = 1
+         if(bin_type.eq.'log_linear') then
+         log_width = 0.001d0
+         else
+           log_width = 0.0d0
+         endif
          goto 1
 
 c     broadening function

@@ -1,6 +1,6 @@
       subroutine ofiles
       implicit none
-
+cccccccccccccccccccccccccccccccccccccccccccccccccc
 c     start_doc
 c     Name
 c       ofiles
@@ -21,6 +21,7 @@ c     istop  passed to the main to stop the program
 c     
 c
 c     end_doc
+cccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       include 'iochan.h'
       include 'control.inc'
@@ -36,16 +37,6 @@ c     check if  input file is there
 
       open (unit = io7, file = 'fort.7',  status = 'UNKNOWN',
      $      access = 'SEQUENTIAL', form = 'FORMATTED')
-
-c   ... 0  neutron scaterring lengths 
-
-c      open(unit = io0, file = 'weights.dat', status= 'OLD',
-c     $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
-c      if (ios.ne.0) then 
-c         write (io7,*) '* FATAL (ofile) weigths file does not exist'
-c         istop=1
-c      endif
-
 
 
 c   .... 1 input.dat       
@@ -72,22 +63,19 @@ c     ... 3 trajectory file
       open (unit = io2, file = 'trajectory',  status = 'OLD',
      $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
       if (ios.ne.0) then 
-         write (io7,*) '* FATAL (ofile) trajectory file does not exist'
-         istop=1
+         write (io7,*) '* atomisitc trajectory does not exist'
+c         istop=1
       endif
+
       if(ierror.eq.1) then
       write(io7,*)'error input file does not exist'
       endif
 
+c     ... 4 CG trajectory file
 
-
-
-c     ... 4 total unweighted g(r) 
-      open (unit = io4,file = 'unweighted-total.gr',status = 'UNKNOWN',
+      open (unit = io3, file = 'CG_trajectory',  status = 'UNKNOWN',
      $      access = 'SEQUENTIAL', form = 'FORMATTED')
 
-c     ... 5 total unweighted S(Q)  
-      open (unit=io66, file = 'unweighted-total.sq',status = 'UNKNOWN',
-     $      access = 'SEQUENTIAL', form = 'FORMATTED')
+
 
        end

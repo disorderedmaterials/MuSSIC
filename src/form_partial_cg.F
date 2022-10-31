@@ -1,4 +1,4 @@
-        subroutine  form_partial(data1,data2)
+        subroutine  form_partial_cg(data1,data2)
            implicit none
 
       include 'system.inc'
@@ -6,6 +6,7 @@
       include 'control.inc'
       include 'iochan.h'
       include 'rdf.inc'
+      include 'model.inc'
 
         double precision lower_shell_limit,delta,number_density,
      & multiplier,shell_volume,factor
@@ -15,9 +16,9 @@
         integer*8 i,j,k
 
 
-              do i = 1,ntypes
+              do i = 1,bead_types
 
-                do j = 1,ntypes
+                do j = 1,bead_types
 
                      lower_shell_limit = 0.0d0
 
@@ -39,7 +40,6 @@ c                     number_density = nr(j)/(boxx*boxy*boxz)
      & -lower_shell_limit**3)
 
 c        factor = nr(i)*shell_volume*number_density
-
          if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
 
 
@@ -52,8 +52,8 @@ c        factor = nr(i)*shell_volume*number_density
         endif
 
 
-        lower_shell_limit = lower_shell_limit + bin_width
 
+        lower_shell_limit = lower_shell_limit + bin_width
 
 
                    enddo

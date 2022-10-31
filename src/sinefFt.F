@@ -7,9 +7,9 @@
       include 'iochan.h'
     
 
-        double precision data1(nbins),data2(wbins+1),normfactor
-        double precision ft,deltaX,omega,oldX(nbins),oldY(nbins),param,
-     &broaden,newX(wbins),newY(wbins),wind,wstep,omegamax
+        double precision data1(max_binr),data2(wbins+1),normfactor
+        double precision ft,deltaX,omega,oldX(max_binr),oldY(max_binr),
+     &param,broaden,newX(wbins),newY(wbins),wind,wstep,omegamax
 
         integer*8 m,nX,cnt,n_bins
         character*40 broadening
@@ -17,7 +17,7 @@
 
               
 
-                n_bins = nbins-1
+                n_bins = max_binr-1
                 wstep = qdelta
                 omega = qmin
                 omegamax = qmax
@@ -71,12 +71,7 @@ c apply window function
         endif
 
 
-
-
-          
-
-
-         ft=ft+dsin(oldX(m)*omega)*oldX(m)*oldY(m)
+       ft=ft+dsin(oldX(m)*omega)*oldX(m)*oldY(m)
      &*broaden*wind*deltaX
 
            
@@ -128,7 +123,11 @@ c Add point
        
         data2(cnt) = ft*normfactor
 
-        omega = omega + wstep
+        if (bin_type.eq.'log_linear') then
+        omega = omega + binq(cnt)
+        elseif(bin_type.eq.'linear') then
+         omega = omega + qdelta
+        endif
 
 
         enddo

@@ -1,4 +1,5 @@
         subroutine partial_rdf
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     start_doc
 c     Name
 c       partial_rdf
@@ -9,6 +10,7 @@ c       Computes partial and total  g(r) from histogram by normalization
 c       and summation
 c       
 c     end_doc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         implicit none
       include 'system.inc'
@@ -22,17 +24,21 @@ c     end_doc
       character*100 file_name
       double precision xCentre,newY(nbins),param,broaden,xtemp,norm
 
+cccccccccccccccccccccccccccccccccccccccccccccccccccccc      
 c    normalize histogram values to from partial g(r)
-c    sum all the partial g(r) to form total g(r)      
+c    sum all the partial g(r) to form total g(r) 
 
-        call form_partial(histogram,partialgr)
 
+       call form_partial(histogram,partialgr)
        call form_partial(bound_hist,bound_partialgr)
        call form_partial(unbound_hist,unbound_partialgr)
 
+       
        call form_total(partialgr,totalgr,nbins)
 
 
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc       
 c  writes the partial g(r) values to the files named after the atom types         
 
         file_cnt = 0
@@ -55,7 +61,7 @@ c  writes the partial g(r) values to the files named after the atom types
 
 
                 open(unit = fu,file=trim(file_name),status='unknown')
-
+           open(unit = 14,file='unweighted-total.gr',status='unknown')
 
 
               do k = 1,nbins
@@ -67,12 +73,13 @@ c  writes the partial g(r) values to the files named after the atom types
 
         enddo
         enddo
-
+ccccccccccccccccccccccccccccccccccccc
 c   writes the total g(r) to the file
+ccccccccccccccccccccccccccccccccccccc        
 
       do i = 1,nbins
 
-      write(io4,*)binr(i),totalgr(i)
+      write(14,*)binr(i),totalgr(i)
 
       enddo
 

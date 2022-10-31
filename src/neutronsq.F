@@ -1,4 +1,5 @@
       subroutine neutronsq
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc              
 c     start_doc
 c     Name
 c       neutronsq
@@ -13,6 +14,7 @@ c      and then combined with unbound partial S(Q) to form total
 c      weighted  S(Q)
 c
 c     end_doc
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       implicit none
       include 'system.inc'
@@ -35,13 +37,14 @@ c     end_doc
            integer*8 fu,fu1,fu2,deu_step,temp,typej,typek,file_cnt
             double precision wt_factor, total_num
 
+ccccccccccccccccccccccccccccccccccccccccc
 c   concentration of the atom types            
 
           do i = 1,ntypes
           c(i) = dble(nr(i))/dble(natoms)
           enddo
-
-c    opens the files according to the isotopologue name
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c    open the files according to the isotopologue name
 
                do deu_step = 1,num_iso
 
@@ -80,7 +83,7 @@ c    opens the files according to the isotopologue name
                  enddo
 
                  enddo
-
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c    compute the scattering length density of the atom type from isotope ratio              
 
 
@@ -95,7 +98,7 @@ c    compute the scattering length density of the atom type from isotope ratio
             endif
                  enddo
 
-
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c change the scattering length density if there are exchangeables                 
 
                  wt_factor = 0.0d0
@@ -114,8 +117,12 @@ c change the scattering length density if there are exchangeables
                      
                     if(ex(i).eq.1) bcd(i) = wt_factor/total_num
 
+
                     enddo
 
+                   
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  compute the weight for intra molecular contribution                     
 
 
@@ -246,7 +253,7 @@ c             write(io7,*)'intra',text2(deu_step),j,k,bj,bk
 
             enddo
 
-
+cccccccccccccccccccccccccccccccccccccccccccccccccc
 c  normalize the intra_molecular weighting factor
 
 
@@ -264,11 +271,23 @@ c  normalize the intra_molecular weighting factor
 
              endif
 
+
+             enddo
+
+             enddo
+
+             do i = 1,ntypes
+
+             do j = 1,ntypes
+
+             write(io7,*)'intra_weight',i,j,intra_weight(i,j)
+
              enddo
 
              enddo
 
 
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   multipliy the partial S(Q)s with the weighting factors seperately
 
         write(io7,*)'ci,bi'
@@ -276,6 +295,8 @@ c   multipliy the partial S(Q)s with the weighting factors seperately
          do i = 1,ntypes
 
            do j = 1,ntypes
+
+               if(i.gt.j) cycle
 
                  
                  if(i.eq.j)then
@@ -325,7 +346,7 @@ c   multipliy the partial S(Q)s with the weighting factors seperately
                   enddo
 
                   enddo
-
+ccccccccccccccccccccccccccccccccccccccccccc
 c  write the weighting matrix to log file     
 c write the weighted partial S(Q) to a file              
 
@@ -335,6 +356,8 @@ c write the weighted partial S(Q) to a file
 
          do i = 1,ntypes
          do j = 1,ntypes
+
+        
 
 
          write(io7,*)i,j,print_weight(i,j),print_intra(i,j)
@@ -372,7 +395,7 @@ c write the weighted partial S(Q) to a file
         write(fu1,*)binw(i),d_totalweightedsq(i)
 
         enddo
-
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   back Fourier transform to obtain G(r) from total S(Q)        
               
            norm = 1.0d0/(2.0d0*PI*PI*(dble(natoms)/(boxx*boxy*boxz)))
@@ -386,7 +409,7 @@ c   back Fourier transform to obtain G(r) from total S(Q)
           enddo
 
 
-         call sinebFT(data_1,data_2,norm,windowfn)
+c         call sinebFT(data_1,data_2,norm,windowfn)
 
        
 

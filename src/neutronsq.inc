@@ -18,7 +18,7 @@ C neutronsq.inc
 
 
         double precision intra_weight(maxtyp,maxtyp),
-     & weight(maxtyp,maxtyp),intra_norm(maxtyp,maxtyp)
+     & weight(maxtyp),weight1(maxtyp,maxtyp),intra_norm(maxtyp,maxtyp)
 
 
 
@@ -30,7 +30,7 @@ C neutronsq.inc
      & d_totalweightedgr,d_Gr
        common/ neu4/ d_bound_wsq,d_unbound_wsq
 
-       common/ neu5/ intra_weight,weight,intra_norm
+       common/ neu5/ intra_weight,weight,weight1,intra_norm
 
 
 

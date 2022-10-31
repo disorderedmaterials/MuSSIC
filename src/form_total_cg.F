@@ -1,10 +1,11 @@
-        subroutine form_total(data1,data2,n_bins)
+        subroutine form_total_cg(data1,data2,n_bins)
         implicit none
          
         include 'system.inc'
         include 'config.inc'
         include 'control.inc'
         include 'iochan.h'
+        include 'model.inc'
 
 
         double precision multiplier,total_factor
@@ -13,10 +14,11 @@
 
         integer*8 i,j,k,n_bins
 
+         
 
-            do i = 1,ntypes
+            do i = 1,bead_types
 
-                do j = 1,ntypes
+                do j = 1,bead_types
 
 
         if(i .eq.j) then
@@ -29,26 +31,18 @@
         if(i.gt.j)cycle
 
 
-       total_factor = (real(nr(i)*nr(j))/real(natoms)**2)*multiplier
-
-
-      
-
+         total_factor = (real(nr(i)*nr(j))/real(natoms)**2)*multiplier
 
               do k = 1,n_bins
 
-               data2(k) = data2(k) +(data1(i,j,k)*total_factor)
-
-
+               data2(k) = data2(k) + data1(i,j,k)*total_factor
 
                enddo
 
 
                enddo
 
-             enddo
-            
+                enddo
 
- 
            return
           end

@@ -1,4 +1,5 @@
       subroutine initialize
+cccccccccccccccccccccccccccccccccccccccccccccccc
 c     start_doc
 c     Name
 c       initialize
@@ -9,6 +10,7 @@ c       initializes  parameters and arrays for RDF caluclation
 c       defines the bins for histogram binning
 c
 c     end_doc
+ccccccccccccccccccccccccccccccccccccccccccccccccc
 
       implicit none
       include 'system.inc'
@@ -20,39 +22,94 @@ c     end_doc
       include 'sq.inc'
       include 'neutronsq.inc'
 
-      integer*8 i,j,k,typej,typek,temp
-         double precision delta
+      integer*8 ii,jj,l,i,j,k,typej,typek,temp
+         double precision delta,minimum
 
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc         
+
+c     ... 5 total unweighted g(r)
+      open (unit = io14,file = 'unweighted-total.gr',status = 'UNKNOWN',
+     $      access = 'SEQUENTIAL', form = 'FORMATTED')
+
+c     ... 6 total unweighted S(Q)
+      open (unit=io16, file = 'unweighted-total.sq',status = 'UNKNOWN',
+     $      access = 'SEQUENTIAL', form = 'FORMATTED')
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c  computing the cutoff 
+
+          minimum = boxy
+
+          if(Boxx.lt.minimum) minimum =boxx
+          if(Boxz.lt.minimum) minimum = boxz
+
+          minimum = minimum/2.0d0
+
+
+        cutoff =  minimum -  mod(minimum,bin_width) 
+                   
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   number of bins for rdf calculation
 
           nbins = int(cutoff/bin_width)
+          max_binr = nbins
 
-c   number of bins in Q-space        
+
+          do i = 1,max_binr
+          frame(i) = 0
+          enddo
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c   number of bins in Q-space     
+
+         qmin = (2.0d0*pi)/cutoff
 
           wbins = idnint((qmax-qmin)/qdelta)
 
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   define the bin values for rdf calculation          
 
             delta = bin_width/2.0d0
 
-            do i = 1,nbins
+            do i = 1,maxbins
             binr(i) =  delta
             delta = delta + bin_width
             enddo
 
-           
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc           
 c   define the bin values for Q-space
 
-            delta = qmin
-            do i = 1,wbins
-            binw(i) = delta
-            delta = delta + qdelta
-            enddo
+          if(bin_type.eq.'linear') then
 
-          
-            
+           delta = qmin
+           do i = 1,wbins
+           binw(i) = delta
+           delta = delta + qdelta
+           enddo
+
+          elseif(bin_type.eq.'log_linear') then
+
+          delta = qmin    
+             do i = 1,maxbins
+
+             if(delta.lt.qmax) then
+
+             binq(i) = qdelta * dtanh((log_width/qdelta)*i)
 
 
+             binw(i) = delta + binq(i)/2.0d0
+
+
+            delta = delta + binq(i)
+
+             wbins = i
+
+             endif
+             enddo 
+
+             endif
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c initialisation of arrays for histogram binning
 
        do i = 1,ntypes
@@ -62,7 +119,7 @@ c initialisation of arrays for histogram binning
 
           intra_flag(i,j) = 0
 
-            do k = 1,nbins
+            do k = 1,maxbins
 
           histogram(i,j,k) = 0.0d0
           bound_hist(i,j,k) = 0.0d0
@@ -83,12 +140,12 @@ c initialisation of arrays for histogram binning
              totalweightedsq(i) = 0.0d0
               enddo
 
-              do i = 1,nbins
+              do i = 1,maxbins
               totalweightedgr(i) = 0.0d0
               enddo
 
 
-
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c    check for the exchangeables and mark the array 'ex(atom type)' as '1'
 
 
@@ -106,9 +163,39 @@ c    check for the exchangeables and mark the array 'ex(atom type)' as '1'
 
               enddo
 
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c read number of atoms
+        read(io2,*)natoms
+        if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
+        read(io2,*)boxx,boxy,boxz
+        else
+        read(io2,*)
+        endif
+
+        l = 0
+        do ii = 1,num
+
+             do jj = 1,nmol(ii)
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c loop over number of atoms to read x, y and z cordinates
+        do i = 1,nat(ii)
+        l = l + 1
+        read(io2,*)label_atom(l),x(l),y(l),z(l)
+
+        if (jj.eq.1) label_at(ii,i) = label_atom(l)
+
+        enddo
+
+             enddo
+
+        enddo
+
+        close(io2)
+      open (unit = io2, file = 'trajectory',  status = 'unknown')
 
 
-             
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Label the atoms that belong to same molecule. This helps computing
 c  the rdf correlations due to intramolecular atoms    
 
@@ -121,7 +208,7 @@ c  the rdf correlations due to intramolecular atoms
 
                         do k = 1,ntypes
    
-                     if(label(i,j).eq.label_type(k)) model_type(i,j)= k
+                 if(label_at(i,j).eq.label_type(k)) model_type(i,j)= k
 
                      
                         enddo
@@ -163,7 +250,7 @@ c  the rdf correlations due to intramolecular atoms
                             enddo
 
                             enddo
-
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   Assign  the  values of ratio of isotope to that atom type                 
 
                 do i = 1,num_iso

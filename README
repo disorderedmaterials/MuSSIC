@@ -114,23 +114,3 @@ OH
 HC
 HC
 HO
-
-
-## Overview
-
-**Dissolve** is a simulation tool for the interrogation of neutron scattering data, typically total neutron scattering data. It builds on the techniques established in the Empirical Potential Structure Refinement (EPSR) method by Soper.
-
-The basic algorithms used in both Dissolve and EPSR, and the intent of Dissolve, is described in "[Dissolve: next generation software for the interrogation of total scattering data by empirical potential generation](https://doi.org/10.1080/00268976.2019.1651918)", _Mol. Phys._ **117**, 3464-3477 ([10.1080/00268976.2019.1651918](https://doi.org/10.1080/00268976.2019.1651918))
-
-## Downloads
-
-Installers for all major platforms can be found at  or on the , including from the latest development branch.
-
-## Documentation
-
-Documentation is a work in progress, and is available [here]
-
-Various tutorial material and examples for **Dissolve** can be [found here]
-## Support / Issues
-
-If you have discovered a definite bug or an "odd feature" with Dissolve that needs attention, please [submit an issue] here on GitHub. If you want to talk about usability, how to address specific problems with Dissolve, or aren't sure quite what you've found in the code, consider posting a question m).

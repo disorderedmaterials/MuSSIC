@@ -21,7 +21,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccc
       include 'iochan.h'
       include 'model.inc'
 
-      integer*8 temp,i,j,l,ii,jj
+      integer*8 temp,i,j
 
       double precision minimum
 

@@ -33,7 +33,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccc
      &iqdelta,iqmax,ibroadening,iFWHM,iwindowfn,ilabel,iex,ibc,i,j,
      &inum_iso,ibinning,iensemble,iFF_label
      
-  
+   
       intypes = 0
       inframes = 0 
       icutoff = 0
@@ -53,6 +53,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccc
       ibinning = 0
       iensemble = 0
       iFF_label = 0
+      isubstitute = 0
 
 1     read (io1, '(a80)', end = 100, 
      $err = 900) line
@@ -60,6 +61,15 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     run type
       if (line(1:3) .eq. 'run') then
          read(io1,*) run_type
+         if(run_type.eq.'default'.and.icgtraj.eq.0) then
+         write(io7,*)'Error: CG trajectory not provided'
+         stop
+         endif
+
+         if(run_type.eq.'compare_CG'.and.itraj.eq.0) then
+         write(io7,*)'Error: atomistic trajectory not provided'
+         stop
+         endif
          goto 1
 
 c     number of processors
@@ -86,6 +96,7 @@ c     number of frames
 c     length of the simulation box
       elseif (line(1:10) .eq. 'box_length') then
          read (io1, *) boxx,boxy,boxz
+         write(io7,*)'box dimensions:',boxx,boxy,boxz
          ibox=1
          goto 1
 
@@ -161,6 +172,20 @@ c    isotpe details in each isotopologue
           enddo
           goto 1
 
+c   isotopic substitution
+
+       elseif(line(1:21).eq.'isotopic_substitution') then
+               read(io1,*)iso_sub
+        if(iso_sub.eq.'manual') then
+                isubstitute = 1
+        else
+                isubstitute = 0
+
+        endif
+
+        goto 1
+
+
 c     minimum value of Q range
       elseif (line(1:4) .eq. 'qmin') then
          read (io1, *) qmin
@@ -225,6 +250,7 @@ c     unrecognised line
          stop
       endif
 100    continue
+
 
       return
 

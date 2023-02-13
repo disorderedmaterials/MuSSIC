@@ -22,21 +22,25 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'iochan.h'
       include 'rdf.inc'
       include 'model.inc'
+      include 'manual.inc'
 
-      integer*8 temp,temp1,temp2,ii,jj,kk,i,j,k,l,bin,bl,el,
-     &typeJ,typeK
+      integer*8 temp,temp1,temp2,ii,jj,kk,i,j,k,bin,bl,el,
+     &typeJ,typeK,bl_init
       double precision Dx,Dy,Dz,distance
 
       double precision hist_local(ntypes,ntypes,max_binr),
-     &bound_hist_local(ntypes,ntypes,max_binr)
+     &bound_hist_local(ntypes,ntypes,max_binr),box_vol
+c      double precision,dimension(:,:,:),allocatable :: hist_local
+c      double precision,dimension(:,:,:),allocatable :: bound_hist_local
+
+c      allocate(hist_local(ntypes,ntypes,max_binr))
+c      allocate(bound_hist_local(ntypes,ntypes,max_binr))
 
 
 
          do i = 1,ntypes
            do j = 1,ntypes
             do k = 1,max_binr
-
-
 
         hist_local(i,j,k) = 0.0d0
         bound_hist_local(i,j,k) = 0.0d0
@@ -47,27 +51,29 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
           enddo
 
+
 cccccccccccccccccccccccccccccccccccc      
 c   self terms in histogram binning
 
 
       do i = 1,ntypes
 
-
-
          temp = nr(i)
 
+          
 c$omp parallel
-c$omp& shared ( i,rr, temp, boxx, boxy, boxz, bin_width, nbins )
+c$omp& shared (i,rr, temp, boxx, boxy, boxz, bin_width, nbins)
 c$omp& shared (max_binr, cutoff)
-c$omp& private ( j,k,Dx,Dy,Dz,distance,bin )
+c$omp& private (j,k,Dx,Dy,Dz,distance,bin )
 
 c$omp do reduction ( + : hist_local )
+
 
              do j = 1,temp-1
 
                        do k = j+1, temp
 
+                      
                  Dx = rr(i,k,1) - rr(i,j,1)
                  Dy = rr(i,k,2) - rr(i,j,2)
                  Dz = rr(i,k,3) - rr(i,j,3)
@@ -99,8 +105,11 @@ c$omp end do
 
 c$omp end parallel
 
-        
-       enddo
+                   
+
+         enddo
+
+       
 
        
 
@@ -141,6 +150,7 @@ C     Nearest Image   C
 Ccccccccccccccccccccccc
                 Dx = Dx - boxx*nint(Dx/boxx)
                 Dy = Dy - boxy*nint(Dy/boxy)
+                Dy = Dy - boxy*nint(Dy/boxy)
                 Dz = Dz - boxz*nint(Dz/boxz)
 
 
@@ -173,25 +183,33 @@ c$omp end parallel
 cccccccccccccccccccccccccccccccccccccccccccccccc
 c    histogram from intramolecular pairs
 cccccccccccccccccccccccccccccccccccccccccccccccc
+             bl_init = 0
 
-
-             
              do i = 1,num
 
-             
-             
+
+               if(i.le.1) then
+
+                bl_init = 0
+
+                else
+
+                bl_init = bl_init + nmol(i-1)*nat(i-1)
+
+                endif
+
+
                 do j = 1,nmol(i)
 
-             
-                bl = ((j-1)*nat(i))+1
+                bl = ((j-1)*nat(i))+1+bl_init
 
                 el = bl+nat(i)-1
 
-                
 
                 xpbc(bl) = x(bl)
                 ypbc(bl) = y(bl)
                 zpbc(bl) = z(bl)
+
 
                 do jj = bl+1,el
 
@@ -199,7 +217,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
                      Dx = x(jj) - xpbc(jj-1)
                      Dy = y(jj) - ypbc(jj-1)
                      Dz = z(jj) - zpbc(jj-1)
-
 
 Ccccccccccccccccccccccc
 C     Nearest Image   C
@@ -216,26 +233,40 @@ Ccccccccccccccccccccccc
 
 
 
+
                 enddo
 
              enddo
 
+
              enddo
 
-c            write(*,*)'intra molecular pairs'
+                bl_init = 0
 
              do i = 1,num
 
+               if(i.le.1) then
+
+                bl_init = 0
+
+                else
+
+                bl_init = bl_init + nmol(i-1)*nat(i-1)
+
+                endif
+
+
 c$omp parallel 
 c$omp& shared ( i,nmol,nat,itype,boxx,boxy,boxz,bin_width,nbins) 
-c$omp& shared (xpbc,ypbc,zpbc,max_binr,cutoff)
+c$omp& shared (xpbc,ypbc,zpbc,max_binr,cutoff,bl_init)
 c$omp& private ( j,bl,el,jj,kk,typeJ,typeK,Dx,Dy,Dz,distance,bin ) 
 
 c$omp do  reduction ( + : bound_hist_local )
+
                   do j = 1,nmol(i)
 
 
-                       bl = ((j-1)*nat(i))+1
+                       bl = ((j-1)*nat(i))+1+bl_init
                        el = bl+nat(i)-1
 
                       do jj = bl,el-1
@@ -270,7 +301,7 @@ c                Dz = Dz - boxz* dble(Idint((Dz/boxz) +9999.5d0) - 9999)
 
 
           
-          if(bin.le.max_binr.and.distance.le.cutoff) then
+          if(distance.le.cutoff) then
           bound_hist_local(typeJ,typeK,bin)=
      &  bound_hist_local(typeJ,typeK,bin)+1.0d0
         
@@ -289,7 +320,6 @@ c$omp end do
 c$omp end parallel
 
           enddo
-
 
 
 cccccccccccccccccccccccccccccccccccccc
@@ -318,10 +348,13 @@ c        write(io7,*)'histogram for inter molecular terms taken'
 
                     do k = 1,max_binr
 
+              
        histogram(i,j,k)=histogram(i,j,k)+ hist_local(i,j,k)
      &/((nr(i)*nr(j))/(boxx*boxy*boxz))
        bound_hist(i,j,k)=bound_hist(i,j,k)+ bound_hist_local(i,j,k)
      &/((nr(i)*nr(j))/(boxx*boxy*boxz))
+
+      
 
         unbound_hist(i,j,k) = histogram(i,j,k)-bound_hist(i,j,k)
                  
@@ -331,5 +364,8 @@ c        write(io7,*)'histogram for inter molecular terms taken'
             
              enddo
 
-              end
 
+c             deallocate(hist_local)
+c             deallocate(bound_hist_local)
+
+              end

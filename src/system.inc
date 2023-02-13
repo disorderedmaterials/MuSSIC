@@ -14,7 +14,7 @@ C     System.Inc
      
 
 C vectors and matrixes sizes
-      parameter (maxnatoms = 5000000)   ! max number of atoms
+      parameter (maxnatoms = 1000000)   ! max number of atoms
       parameter (maxtyp = 10)   ! max number of atom types
       parameter (maxbins = 10000) !max number of histogram bins     
       parameter (maxnum = 10) ! max number of species
@@ -31,18 +31,18 @@ C physical constants
       common/ sys5/ binr,binw,binq,log_width
 
       integer*8 num_iso,ex(maxtyp),noex,mol(maxtyp),
-     &deut_flag(maxtyp,maxtyp)
+     &deut_flag(maxtyp,maxtyp),rmsd_cnt(maxtyp),isubstitute
 
-      common/ sys6/ num_iso,ex,noex,mol,deut_flag
+      common/ sys6/ num_iso,ex,noex,mol,deut_flag,rmsd_cnt,isubstitute
       
       character*10 label_iso(maxtyp,maxtyp),label_ex(maxtyp),
-     &text1(maxtyp),text2(maxtyp),bin_type,ensemble_type
+     &text1(maxtyp),text2(maxtyp),bin_type,ensemble_type,iso_sub
       double precision natural(maxtyp,maxtyp),isotope(maxtyp,maxtyp),
      &iso_fraction(maxtyp,maxtyp)
       
 
       common/ sys7/ label_iso,label_ex,text1,text2,bin_type
-      common/ sys10/ ensemble_type
+      common/ sys10/ ensemble_type,iso_sub
 
       common/ sys8/ natural,isotope,iso_fraction
 

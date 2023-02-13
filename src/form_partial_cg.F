@@ -8,8 +8,7 @@
       include 'rdf.inc'
       include 'model.inc'
 
-        double precision lower_shell_limit,delta,number_density,
-     & multiplier,shell_volume,factor
+        double precision lower_shell_limit,multiplier,shell_volume
         double precision data1(maxtyp,maxtyp,maxbins),
      & data2(maxtyp,maxtyp,maxbins)
 

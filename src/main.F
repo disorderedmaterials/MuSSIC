@@ -51,11 +51,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 
       double precision elapsetime1,elapsetime2
-      integer*8 istep,id,i
+      integer*8 istep,id,i,fu_1
 
       
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-      write(io7,*)'Scattering calculation: version 0.9 (27-06-2022) '
+      write(*,*)'Scattering calculation: version 1.0 (26-01-2023) '
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
  
@@ -103,6 +103,8 @@ cccccccccccccccccccccccccccccccccccccccccccc
 
       call getdata
 
+      write(*,*)'read input.dat file successfully'
+
 cccccccccccccccccccccccccccccccccccccccccccccc
 c stops if there is a missing/wrong input data 
 cccccccccccccccccccccccccccccccccccccccccccccc     
@@ -116,6 +118,10 @@ c  reads data from the model file 'model.dat'
 ccccccccccccccccccccccccccccccccccccccccccccc      
 
       call rdmodel
+
+
+
+      write(*,*)'read model.dat file successfully'
 
 ccccccccccccccccccccccccccccccccccccccccccccccccc      
 c stops if there is any missing/wrong model data
@@ -142,13 +148,14 @@ c   compare with F_CG(Q) by mapping atoms in the atomistic trajectory
 c   onto a CG bead   (refer documentation for deatils)
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc      
 
-
       if(run_type.eq.'compare_CG')then
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Scattering calculation from atomistic simulations starts here
       write(io7,*)'Computing F(Q) using the atomistic trajectory '
+      write(*,*)'******started F(Q) calculation using atomistic trajecto
+     &ry*******'
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -157,7 +164,26 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
        call initialize
      
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c   if isotope susbstitution is manually done, write the trajectory
+c   and reinitialize the arrays
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+        if(isubstitute.eq.1) then
+         call wrtraj
+          
        
+         call reinitialize
+        endif
+
+       
+       
+      write(*,*)'Initialization of vectors for F(Q) completed'
+
+      write(*,*)'Loop begins over number of frames to populate 
+     &histogram for g(r) calculation'
+
+
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Loop over number of frames in atomisitc trajectory start here
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -165,11 +191,17 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       do istep = 1,nframes
 
 
+     
+      write(*,*)'frame:',istep
+
+
 ccccccccccccccccccccccccccccccccccccccccccccc
 c read configuration from the trajectory file
 ccccccccccccccccccccccccccccccccccccccccccccc
 
       call rdtraj
+
+      
 
      
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -186,11 +218,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccc
 
       call rdf
 
-     
-
       enddo
 
              
+      write(*,*)'Loop ends over number of frames; histogram computed'
+
 cccccccccccccccccccccccccccccccccccccccc
 c  Loop  over number of frames ends here 
 cccccccccccccccccccccccccccccccccccccccc
@@ -206,6 +238,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       call partial_rdf
 
        
+      write(*,*)'partial g(r) computed'
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   calculates the partial pair structure factors by performing the
 c   Fourier transfrom on g_ij(r)
@@ -215,6 +248,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       call sq
 
+
+      write(*,*)'partial S(Q) computed'
       
       
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -226,7 +261,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       call neutronsq
 
 
-        close(io2)
+      write(*,*)'Weighted S(Q) computed'
+ 
+        fu_1 = 120+num_iso       
+ 
+       close(io2)
+
+      if(isubstitute.eq.1) close(fu_1)
+      
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c    perform the CG mapping following the mapping scheme given in model.dat
@@ -243,28 +285,45 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Scattering calculation from atomistic simulations ends  here
       write(io7,*)'F(Q) calculation from atomistic trajectory completed'
+      write(*,*)'F(Q) calculation from atomistic trajectory completed'
+
+
+      write(*,*)'Generated CG trajectory following the mapping scheme
+     &given in model file'
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       
            
-            endif       
+            endif     
+
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Scattering calulcation on the coarse grain trajectory obtained from CG_mapping
-      write(io7,*)'F_CG(Q) calculation using CG trajectory started '
+      write(io7,*)'*****Started F_CG(Q) calculation using CG trajectory'
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc      
 
+        
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c initialize values and vectors needed for F_CG(Q)  calculation
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc      
       call initialize_cg
 
+
+        if(isubstitute.eq.1.and.run_type.eq.'default') then
+         call wrtraj_cg                 
+         call reinitialize_cg
+        endif
+
       
+      write(*,*)'Initialization of vectors for F(Q) completed'
+      write(*,*)'Loop begins over number of frames to populate
+     & histogram for g(r) calculation'
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Loop over number of frames in the CG trajectory starts here
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       do istep = 1,nframes
 
+      write(*,*)'frame:',istep
 ccccccccccccccccccccccccccccccccccccccccccccc
 c read configuration from the trajectory file
 ccccccccccccccccccccccccccccccccccccccccccccc      
@@ -292,6 +351,7 @@ c  loop over number of frames in CG trajectory ends here
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc      
      
 
+      write(*,*)'Loop ends over number of frames; histogram computed'
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc      
 c   calculates the partial pair correaltion function for all possible
 c   pairs of bead types
@@ -303,6 +363,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       call partial_rdf_cg
 
       
+      write(*,*)'partial g(r) computed'
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   calculates the bead radius from the CG trajectory
@@ -316,6 +377,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
        call bead_size
 
 
+      write(*,*)'bead radius computed'
+
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc       
 c   calculates the partial pair structure factors by performing the
 c   Fourier transfrom on g_ij(r)
@@ -326,6 +389,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       call sq_cg
 
 
+      write(*,*)'partial S(Q) computed'
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   calculates the total structure factor F(Q) for different isotopologues given in input.dat
 
@@ -335,9 +399,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       call neutronsq_cg
 
 
+      write(*,*)'Weighted S(Q) computed'
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Scattering calculation on CG trajectory  ends  here
       write(io7,*)'calculation of F_CG(Q) on CG trajectory completed'
+      write(io7,*)'*****calculation of F_CG(Q) on CG trajectory 
+     &completed*******'
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 
@@ -353,10 +420,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       write(io7,50)  elapsetime1/nproc, elapsetime1/(3600*nproc)
       write(io7,100) elapsetime2/nproc, elapsetime2/(3600*nproc)
 
+      write(*,50)  elapsetime1/nproc, elapsetime1/(3600*nproc)
+      write(*,100) elapsetime2/nproc, elapsetime2/(3600*nproc)
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc      
 
- 50   format(5x,'initial set up time',g15.6,'s',g15.6,'h')
- 100  format(5x,'running time',g15.6,'s',g15.6,'h')
+ 50   format(5x,'initial set up time',g15.6,'seconds',g15.6,'hrs')
+ 100  format(5x,'running time',g15.6,'seconds',g15.6,'hrs')
 
       stop
       end

@@ -23,8 +23,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'rdf.inc'
       include 'model.inc'
 
-      integer*8 temp,temp1,temp2,ii,jj,kk,i,j,k,l,bin,bl,el,
-     &typeJ,typeK
+      integer*8 temp,temp1,temp2,ii,jj,kk,i,j,k,bin,bl,el,
+     &typeJ,typeK,bl_init
       double precision Dx,Dy,Dz,distance
       double precision hist_local(bead_types,bead_types,max_binr),
      &bound_hist_local(bead_types,bead_types,max_binr)
@@ -189,14 +189,27 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
 c    histogram from intramolecular pairs
 cccccccccccccccccccccccccccccccccccccccccccccccc
 
+             bl_init = 0
+
              do i = 1,num
+
+               if(i.le.1) then
+
+                bl_init = 0
+
+                else
+
+                bl_init = bl_init + nmol(i-1)*nbd(i-1)
+
+                endif
+
 
              do j = 1,nmol(i)
 
-                bl = ((j-1)*nbd(i))+1
+                bl = ((j-1)*nbd(i))+1+bl_init
 
                 el = bl+nbd(i)-1
-
+ 
 
                 xcgpbc(bl) = bead_x(bl)
                 ycgpbc(bl) = bead_y(bl)
@@ -224,31 +237,44 @@ Ccccccccccccccccccccccc
                 ycgpbc(jj) = ycgpbc(jj-1) +Dy
                 zcgpbc(jj) = zcgpbc(jj-1) +Dz
 
+c      write(io7,*)jj,xcgpbc(jj),ycgpbc(jj),zcgpbc(jj),
+c     & dsqrt(Dx**2+Dy**2+Dz**2)
 
                 enddo
 
                 enddo
 
                 enddo
+
 
 c            write(io7,*)'intra molecular pairs'
 
+             bl_init = 0
 
              do i = 1,num
 
-            
+             if(i.le.1) then
+
+                bl_init = 0
+
+                else
+
+                bl_init = bl_init + nmol(i-1)*nbd(i-1)
+
+                endif
 
                 if(nbd(i).gt.1) then
+
 c$omp parallel
 c$omp& shared ( i,nmol,nat,itype,boxx,boxy,boxz,bin_width,nbins)
-c$omp& shared (xcgpbc,ycgpbc,zcgpbc,max_binr,cutoff)
+c$omp& shared (xcgpbc,ycgpbc,zcgpbc,max_binr,cutoff,bl_init)
 c$omp& private ( j,bl,el,jj,kk,typeJ,typeK,Dx,Dy,Dz,distance,bin )
 
 c$omp do  reduction ( + : bound_hist_local )
             
                   do j = 1,nmol(i)
 
-                       bl = ((j-1)*nbd(i))+1
+                       bl = ((j-1)*nbd(i))+1+bl_init
                        el = bl+nbd(i)-1
 
 
@@ -294,7 +320,7 @@ c                Dz = Dz - boxz*nint(Dz/boxz)
              bin = ceiling(distance/bin_width)
 
 
-          if(bin.le.max_binr.and.distance.le.cutoff) then
+          if(distance.le.cutoff) then
           bound_hist_local(typeJ,typeK,bin)=
      & bound_hist_local(typeJ,typeK,bin)+1.0d0
         

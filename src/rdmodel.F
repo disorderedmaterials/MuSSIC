@@ -33,6 +33,7 @@ cccccccccccccccccccccccccccccccccccccccccccccc
         inmol = 0
         ilabel=0
         iradius = 0
+        ibonded = 0
     
 2     read (io00, '(a80)', end = 200, 
      $err = 800) line
@@ -101,12 +102,12 @@ c     label of the bead type
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     raidus of the bead
-       elseif(line(1:10).eq.'bead_radius') then
+       elseif(line(1:11).eq.'bead_radius') then
        write(io7,*)'raidus of the bead types'
        iradius = 1
        do i = 1,bead_types
        read(io00,*)sigma(1,i)
-       write(io7,*)lbl_bdtyp(i),label_bead(i)
+       write(io7,*)sigma(1,i)
        enddo
        goto 2
 
@@ -126,7 +127,7 @@ c      bead pair connectivity
        read(io00,*) ((bead_pair(i,j), j=1,bead_types), i=1,bead_types)
        write(io7,*) ((bead_pair(i,j), j=1,bead_types), i=1,bead_types)
 
-       
+         ibonded = 1 
          do i = 1,bead_types
  
           bonded(i) =  0
@@ -196,13 +197,22 @@ c     stop
 
 c     unrecognised line
       else
-         write(io7,*) 'FATAL (getdata)'
-         write(io7,*) 'bad input line'
+         write(io7,*) 'Error: wrong input in input.dat'
          write(io7,*) line                                      
          istop=1
          stop
       endif
 200    continue
+
+        if(iradius.eq.0.and.ibonded.eq.0) then
+
+         write(io7,*)'Error: no input for bead radius'
+      write(io7,*)'either radii of the beads or bead connectivity
+     &matrix has to be provided'
+
+         stop
+         endif
+
 
       return
 

@@ -9,6 +9,10 @@ C
       double precision x(maxnatoms),y(maxnatoms),z(maxnatoms)
      &,rr(maxtyp,maxnatoms,3)
 
+c      double precision,dimension(:,:,:),allocatable :: rr
+c      double precision,dimension(:,:,:),allocatable :: x,y,z
+
+
       double precision xpbc(maxnatoms),ypbc(maxnatoms),zpbc(maxnatoms)
       double precision xcgpbc(maxnatoms),ycgpbc(maxnatoms),
      & zcgpbc(maxnatoms)
@@ -18,7 +22,7 @@ C
 
       
 
-      common /conf1/   x,y,z,xpbc,ypbc,zpbc,xcgpbc,ycgpbc,zcgpbc
+      common/ conf1/ x,y,z,xpbc,ypbc,zpbc,xcgpbc,ycgpbc,zcgpbc
       common/ conf2/ rr
       common/ conf3/ itype,nr,frame,label_atom
       common/ conf4/ bead_lbl

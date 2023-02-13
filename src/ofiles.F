@@ -33,9 +33,10 @@ c     checks on the files supposed to be already there
 
 c     check if  input file is there      
 
+          itraj = 1
+          icgtraj = 1
 
-
-      open (unit = io7, file = 'fort.7',  status = 'UNKNOWN',
+      open (unit = io7, file = 'out.log',  status = 'UNKNOWN',
      $      access = 'SEQUENTIAL', form = 'FORMATTED')
 
 
@@ -53,16 +54,17 @@ c   .... 2  model.dat
        open (unit = io00, file = 'model.dat',  status = 'OLD',
      $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
       if (ios.ne.0) then
-         write (io7,*) '* FATAL (ofile) input data file does not exist'
+         write (io7,*) '* FATAL (ofile) model data file does not exist'
          istop=1
       endif
 
 
 c     ... 3 trajectory file 
 
-      open (unit = io2, file = 'trajectory',  status = 'OLD',
+      open (unit = io2, file = 'trajectory',  status = 'unknown',
      $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
-      if (ios.ne.0) then 
+      if (ios.ne.0) then
+             itraj = 0 
          write (io7,*) '* atomisitc trajectory does not exist'
 c         istop=1
       endif
@@ -74,8 +76,13 @@ c         istop=1
 c     ... 4 CG trajectory file
 
       open (unit = io3, file = 'CG_trajectory',  status = 'UNKNOWN',
-     $      access = 'SEQUENTIAL', form = 'FORMATTED')
+     $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
 
 
+      if (ios.ne.0) then
+             icgtraj = 0 
+         write (io7,*) 'CG trajectory does not exist'
+c         istop=1
+      endif
 
        end

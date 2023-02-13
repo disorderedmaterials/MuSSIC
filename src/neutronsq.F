@@ -34,7 +34,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
            character(len=10) file_id,label1,label2
            character(len=100) file_name,file_name1,file_name2
-           integer*8 fu,fu1,fu2,deu_step,temp,typej,typek,file_cnt
+           integer*8 fu,fu1,fu2,deu_step,typej,typek,file_cnt
             double precision wt_factor, total_num
 
 ccccccccccccccccccccccccccccccccccccccccc
@@ -57,6 +57,7 @@ c    open the files according to the isotopologue name
 
                  fu1 = 400+deu_step
                  fu2 = 500+deu_step
+                
 
 
                 open(unit = fu1,file=trim(file_name1),status='unknown')
@@ -65,6 +66,9 @@ c    open the files according to the isotopologue name
 
                  do i = 1,wbins
                  d_totalweightedsq(i) = 0.0d0
+                 d_totalboundsq(i) = 0.0d0
+                 d_totalunboundsq(i) = 0.0d0
+
                  enddo
 
                  do i = 1,nbins
@@ -113,9 +117,13 @@ c change the scattering length density if there are exchangeables
                     endif
                     enddo
 
+c                    write(io7,*)'scattering lengths before and after' 
+
                     do i = 1,ntypes
                      
                     if(ex(i).eq.1) bcd(i) = wt_factor/total_num
+
+c                    write(io7,*) 'atomtype',i,'with',bcd(i),bc(i)
 
 
                     enddo
@@ -316,18 +324,27 @@ c   multipliy the partial S(Q)s with the weighting factors seperately
 
                   do k = 1,wbins
 
- 
 
-        d_weightedsq(i,j,k)=(unbound_partialsq(i,j,k)*c(i)*c(j)*bcd(i)
-     &*bcd(j)+bound_partialsq(i,j,k)*intra_weight(i,j))*multiplier
+c      if(i.eq.2.and.j.eq.2) intra_weight(i,j)=intra_weight(i,j)/2.0d0 
+
+c        d_weightedsq(i,j,k)=(partialsq(i,j,k)*c(i)*c(j)*bcd(i)
+c     &*bcd(j))*multiplier
+
+
+        d_unbound_wsq(i,j,k)=(unbound_partialsq(i,j,k)*c(i)*c(j)*bcd(i)
+     &*bcd(j))*multiplier
+
         d_bound_wsq(i,j,k)=bound_partialsq(i,j,k)*intra_weight(i,j)
      & *multiplier
 
-        d_unbound_wsq(i,j,k)=d_weightedsq(i,j,k)-d_bound_wsq(i,j,k)
+c       d_unbound_wsq(i,j,k)=d_weightedsq(i,j,k)-d_bound_wsq(i,j,k)
 
-        if(i.le.j) then
-       d_totalweightedsq(k) = d_totalweightedsq(k) + d_weightedsq(i,j,k)
-         endif
+       
+       d_totalweightedsq(k) = d_totalweightedsq(k)+d_bound_wsq(i,j,k)+
+     &d_unbound_wsq(i,j,k)
+       d_totalboundsq(k) = d_totalboundsq(k) + d_bound_wsq(i,j,k)
+       d_totalunboundsq(k) = d_totalunboundsq(k) + d_unbound_wsq(i,j,k)
+      
                   enddo
 
 
@@ -392,7 +409,8 @@ c write the weighted partial S(Q) to a file
 
         do i = 1,wbins
 
-        write(fu1,*)binw(i),d_totalweightedsq(i)
+        write(fu1,*)binw(i),d_totalweightedsq(i),d_totalboundsq(i),
+     & d_totalunboundsq(i)
 
         enddo
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc

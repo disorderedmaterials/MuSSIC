@@ -6,22 +6,65 @@
       include 'control.inc'
       include 'config.inc'
       include 'model.inc'
+      include 'manual.inc'
 
 
-      integer*8 i,ii,j,jj,k,kk,iii,l,ll,total_beads,ndxaux,sel,temp1,
-     & temp,atmcnt
+      integer*8 i,ii,j,jj,k,kk,iii,l,total_beads,ndxaux,sel,temp1,
+     & temp,atmcnt,btyp,bl,el,bl_init,fu_1
          double precision cen_x(100), cen_y(100),cen_z(100),Dx,Dy,Dz,
-     &cox,coy,coz,box,boy,boz,mass,total_mass,bondx(100),bondy(100),
-     &bondz(100)
+     &cox,coy,coz,rmsd
+
+
+         double precision cen_x1(100), cen_y1(100),cen_z1(100),Dx1,Dy1,
+     &Dz1,cox1,coy1,coz1
 
 C**** Read- trajectory file *****
 C********************************
 C**** Read configuration data ***
+
+         if(isubstitute.eq.1) then
+                 fu_1 = 120+num_iso
+                
+
+       open (unit = fu_1, file = filename1,  status = 'unknown')
+          else
        open (unit = io2, file = 'trajectory',  status = 'unknown')
+
+         endif
 
          total_beads = 0
 
           do iii = 1,nframes
+
+          if(isubstitute.eq.1) then
+
+c read number of atoms
+        read(fu_1,*)natoms
+        if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
+        read(fu_1,*)boxx,boxy,boxz
+        else
+        read(fu_1,*)
+        endif
+
+        l = 0
+        do ii = 1,num
+
+             do jj = 1,nmol(ii)
+
+
+c loop over number of atoms to read x, y and z cordinates
+        do i = 1,nat(ii)
+        l = l + 1
+        read(fu_1,*)label_atom(l),x(l),y(l),z(l)
+
+        enddo
+
+        enddo
+
+        enddo
+
+
+           else
 
 c read number of atoms
         read(io2,*)natoms
@@ -49,9 +92,48 @@ c loop over number of atoms to read x, y and z cordinates
 
         enddo
 
-       
+         endif
 
-            
+
+
+ccccccccccccccccccccccccccccccccccccccccccc
+
+             do i = 1,num
+                do j = 1,nmol(i)
+
+                bl = ((j-1)*nat(i))+1
+
+                el = bl+nat(i)-1
+
+                xpbc(bl) = x(bl)
+                ypbc(bl) = y(bl)
+                zpbc(bl) = z(bl)
+
+                do jj = bl+1,el
+
+                     Dx = x(jj) - xpbc(jj-1)
+                     Dy = y(jj) - ypbc(jj-1)
+                     Dz = z(jj) - zpbc(jj-1)
+
+Ccccccccccccccccccccccc
+C     Nearest Image   C
+Ccccccccccccccccccccccc
+
+c               Dx = Dx - boxx*nint(Dx/boxx)
+c               Dy = Dy - boxy*nint(Dy/boxy)
+c               Dz = Dz - boxz*nint(Dz/boxz)
+
+                xpbc(jj) = x(jj) - boxx*nint(Dx/boxx)
+                ypbc(jj) = y(jj) - boxy*nint(Dy/boxy)
+                zpbc(jj) = z(jj) - boxz*nint(Dz/boxz)
+
+                enddo
+
+             enddo
+
+             enddo
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc             
 c        write(io7,*)'cg_mapping: read atomistic trajectory'
         
 
@@ -67,18 +149,17 @@ c        write(io7,*)'cg_mapping: read atomistic trajectory'
                   
                  temp = 0
 
-                if(ii.le.num) then
 
-                do jj = 1,nmol(ii)
+             do jj = 1,nmol(ii)
 
-                 do i = 1,bead_sec(ii)
+             do i = 1,bead_sec(ii)
 
-                 do j = 1,rep_num(ii,i)
+             do j = 1,rep_num(ii,i)
 
                  ndxaux = (j-1)*atom_step(ii,i)+((jj-1)*nat(ii))+atmcnt
 
 
-                 do k = 1,bead_num(ii,i)
+             do k = 1,bead_num(ii,i)
 
 c                if(jj.eq.1) temp = temp + 1
 
@@ -96,27 +177,27 @@ c                if(jj.eq.1) temp = temp + 1
 
                       temp1 = ndxaux + atm_list(ii,i,k,1)
 
-
-c                   if(label_atom(temp1) .eq.'C')  mass = 12.011d0
-c                   if(label_atom(temp1) .eq.'H')  mass = 1.000784d0
-c                   if(label_atom(temp1) .eq.'O')  mass = 15.999d0
-c                   if(label_atom(temp1) .eq.'N')  mass = 14.0067d0
                                        
  
                       
-                     cen_x(1) = x(temp1)
-                     cen_y(1) = y(temp1)
-                     cen_z(1) = z(temp1)
+                    cen_x(1) = xpbc(temp1)
+                    cen_y(1) = ypbc(temp1)
+                    cen_z(1) = zpbc(temp1)
 
-c                     cox = mass*cen_x(1)
-c                     coy = mass*cen_y(1)
-c                     coz = mass*cen_z(1)
+                    cen_x1(1) = x(temp1)
+                    cen_y1(1) = y(temp1)
+                    cen_z1(1) = z(temp1)
+
 
                      cox = cen_x(1)
                      coy = cen_y(1)
                      coz = cen_z(1)
 
-c                     total_mass = mass
+                     
+                     cox1 = cen_x1(1)
+                     coy1 = cen_y1(1)
+                     coz1 = cen_z1(1)
+
 
 
                   do kk = 2,list_size(ii,i,k)
@@ -124,26 +205,34 @@ c                     total_mass = mass
                   sel =  ndxaux + atm_list(ii,i,k,kk)
 
                                     
-                 Dx = x(sel) - cen_x(kk-1)
-                 Dy = y(sel) - cen_y(kk-1)
-                 Dz = z(sel) - cen_z(kk-1)
+                 Dx = xpbc(sel) - cen_x(kk-1)
+                 Dy = ypbc(sel) - cen_y(kk-1)
+                 Dz = zpbc(sel) - cen_z(kk-1)
 
+                 Dx1 = x(sel) - cen_x1(kk-1)
+                 Dy1 = y(sel) - cen_y1(kk-1)
+                 Dz1 = z(sel) - cen_z1(kk-1)
 Ccccccccccccccccccccccc
 C     Nearest Image   C
 Ccccccccccccccccccccccc
 
-                Dx = Dx - boxx*nint(Dx/boxx)
-                Dy = Dy - boxy*nint(Dy/boxy)
-                Dz = Dz - boxz*nint(Dz/boxz)
+c                Dx = Dx - boxx*nint(Dx/boxx)
+c                Dy = Dy - boxy*nint(Dy/boxy)
+c                Dz = Dz - boxz*nint(Dz/boxz)
 
-c                Dx = Dx - boxx* dble(Idint((Dx/boxx) +9999.5d0) - 9999)
-c                Dy = Dy - boxy* dble(Idint((Dy/boxy) +9999.5d0) - 9999)
-c                Dz = Dz - boxz* dble(Idint((Dz/boxz) +9999.5d0) - 9999)
+           Dx1 = Dx1 - boxx* dble(Idint((Dx1/boxx) +9999.5d0) - 9999)
+           Dy1 = Dy1 - boxy* dble(Idint((Dy1/boxy) +9999.5d0) - 9999)
+           Dz1 = Dz1 - boxz* dble(Idint((Dz1/boxz) +9999.5d0) - 9999)
 
 
                  cen_x(kk) = cen_x(kk-1) + Dx
                  cen_y(kk) = cen_y(kk-1) + Dy
                  cen_z(kk) = cen_z(kk-1) + Dz
+
+
+                 cen_x1(kk) = cen_x1(kk-1) + Dx1
+                 cen_y1(kk) = cen_y1(kk-1) + Dy1
+                 cen_z1(kk) = cen_z1(kk-1) + Dz1
 
 
 c                   if(label_atom(sel) .eq.'C')  mass = 12.011d0
@@ -162,6 +251,9 @@ c                 total_mass = total_mass + mass
                  coy = coy + cen_y(kk)
                  coz = coz + cen_z(kk)
 
+                 cox1 = cox1 + cen_x1(kk)
+                 coy1 = coy1 + cen_y1(kk)
+                 coz1 = coz1 + cen_z1(kk)
                  enddo
 
 c                 box = 0.0d0
@@ -189,6 +281,48 @@ c                 boz = boz/dble(list_size(ii,i,k)-1)
                  coy = coy/dble(list_size(ii,i,k))
                  coz = coz/dble(list_size(ii,i,k))
 
+
+                 cox1 = cox1/dble(list_size(ii,i,k))
+                 coy1 = coy1/dble(list_size(ii,i,k))
+                 coz1 = coz1/dble(list_size(ii,i,k))
+
+
+                 rmsd = 0.0d0
+
+                   if(list_size(ii,i,k).gt.1) then
+
+                 do kk = 1,list_size(ii,i,k)
+
+          rmsd = rmsd + (cen_x1(kk)-cox1)**2+(cen_y1(kk)-coy1)**2+
+     & (cen_z1(kk)-coz1)**2 
+
+           
+
+c          write(*,*) rmsd,cen_x(kk),cen_y(kk),cen_z(kk),cox,coy,coz
+              
+                  enddo
+
+                   else
+
+                   rmsd = rmsd+ 0.5d0
+
+                  endif
+
+                  
+                  rmsd = rmsd/dble(list_size(ii,i,k))
+
+
+                  do kk = 1,bead_types
+                  if(bead_lbl(l).eq.label_bead(kk)) btyp = kk
+                  enddo 
+
+                  
+
+                  sigma_rmsd(1,btyp) = sigma_rmsd(1,btyp) + dsqrt(rmsd) 
+
+                  sigma_rmsd_cnt(btyp) = sigma_rmsd_cnt(btyp) + 1.0d0
+
+
 c                 cox = cox/total_mass
 c                 coy = coy/total_mass
 c                 coz = coz/total_mass
@@ -206,26 +340,27 @@ c                 if(boy.gt.boxy) boy = boy -boxy
 c                 if(boy.lt.0.0d0) boy = boy +boxy
 c                 if(boz.gt.boxz) boz = boz -boxz
 c                 if(boz.lt.0.0d0) boz = boz +boxz
-c        cox = cox - boxx* dble(Idint((cox/boxx) +9999.5d0) - 9999)
-c        coy = coy - boxy* dble(Idint((coy/boxy) +9999.5d0) - 9999)
-c        coz = coz - boxz* dble(Idint((coz/boxz) +9999.5d0) - 9999)
 
-                  bead_x(l) = cox
-                  bead_y(l) = coy
-                  bead_z(l) = coz
+        cox1 = cox1 - boxx* dble(Idint((cox1/boxx) +9999.5d0) - 9999)
+        coy1 = coy1 - boxy* dble(Idint((coy1/boxy) +9999.5d0) - 9999)
+        coz1 = coz1 - boxz* dble(Idint((coz1/boxz) +9999.5d0) - 9999)
+
+                  bead_x(l) = cox1
+                  bead_y(l) = coy1
+                  bead_z(l) = coz1
 
 
-                 do kk = 1,list_size(ii,i,k)-1
+c                 do kk = 1,list_size(ii,i,k)-1
 
-                  bondx(kk) = (cen_x(kk)+cen_x(kk+1))/2.0d0
-                  bondy(kk) = (cen_y(kk)+cen_y(kk+1))/2.0d0
-                  bondz(kk) = (cen_z(kk)+cen_z(kk+1))/2.0d0
+c                  bondx(kk) = (cen_x(kk)+cen_x(kk+1))/2.0d0
+c                  bondy(kk) = (cen_y(kk)+cen_y(kk+1))/2.0d0
+c                  bondz(kk) = (cen_z(kk)+cen_z(kk+1))/2.0d0
 
-                  box = box + bondx(kk)
-                  boy = boy + bondy(kk)
-                  boz = boz + bondz(kk)
+c                  box = box + bondx(kk)
+c                  boy = boy + bondy(kk)
+c                  boz = boz + bondz(kk)
 
-                  enddo
+c                  enddo
 
 
 
@@ -241,120 +376,8 @@ c                  bead_z(l) = boz
 
                  enddo
 
-         else
 
 
-
-                do jj = 1,nmol(ii),1
-
-                 do i = 1,bead_sec(ii)
-
-                 do j = 1,rep_num(ii,i)
-
-                 ndxaux = (j-1)*atom_step(ii,i)+((jj-1)*nat(ii))+atmcnt
-
-
-                 do k = 1,bead_num(ii,i)
-
-
-                  l = l + 1
-
-                      bead_lbl(l) = lbl_bead(ii,i,k)
-
-
-                 if(jj.eq.1) then
-                 temp = temp + 1
-
-                 label(ii,temp) = bead_lbl(l)
-                 endif
-
-          
-
-                      temp1 = ndxaux + atm_list(ii,i,k,1)
-
-
-                                           
- 
-                      
-                     cen_x(1) = x(temp1)
-                     cen_y(1) = y(temp1)
-                     cen_z(1) = z(temp1)
-
-                     cox = cen_x(1)
-                     coy = cen_y(1)
-                     coz = cen_z(1)
-
-
-
-
-
-                  do kk = 2,list_size(ii,i,k)
-
-                  sel =  ndxaux + atm_list(ii,i,k,kk)
-
-                       
-             
-                 Dx = x(sel) - cen_x(kk-1)
-                 Dy = y(sel) - cen_y(kk-1)
-                 Dz = z(sel) - cen_z(kk-1)
-
-
-
-Ccccccccccccccccccccccc
-C     Nearest Image   C
-Ccccccccccccccccccccccc
-                Dx = Dx - boxx*nint(Dx/boxx)
-                Dy = Dy - boxy*nint(Dy/boxy)
-                Dz = Dz - boxz*nint(Dz/boxz)
-
-c                Dx = Dx - boxx* dble(Idint((Dx/boxx) +9999.5d0) - 9999)
-c                Dy = Dy - boxy* dble(Idint((Dy/boxy) +9999.5d0) - 9999)
-c                Dz = Dz - boxz* dble(Idint((Dz/boxz) +9999.5d0) - 9999)
-
-
-
-                 cen_x(kk) = cen_x(kk-1) + Dx
-                 cen_y(kk) = cen_y(kk-1) + Dy
-                 cen_z(kk) = cen_z(kk-1) + Dz
-
-
-                 cox = cox + cen_x(kk)
-                 coy = coy + cen_y(kk)
-                 coz = coz + cen_z(kk)
-
-                 enddo
-
-                 
-
-                 cox = cox/dble(list_size(ii,i,k))
-                 coy = coy/dble(list_size(ii,i,k))
-                 coz = coz/dble(list_size(ii,i,k))
-
-
-                 if(cox.gt.boxx) cox = cox -boxx
-                 if(cox.lt.0.0d0) cox = cox +boxx
-                 if(coy.gt.boxy) coy = coy -boxy
-                 if(coy.lt.0.0d0) coy = coy +boxy
-                 if(coz.gt.boxz) coz = coz -boxz
-                 if(coz.lt.0.0d0) coz = coz +boxz
-c        cox = cox - boxx* dble(Idint((cox/boxx) +9999.5d0) - 9999)
-c        coy = coy - boxy* dble(Idint((coy/boxy) +9999.5d0) - 9999)
-c        coz = coz - boxz* dble(Idint((coz/boxz) +9999.5d0) - 9999)
-
-                  bead_x(l) = cox
-                  bead_y(l) = coy
-                  bead_z(l) = coz
-
-                              
-                 enddo
-
-                 enddo
-
-                 enddo
-
-                 enddo
-
-               endif                 
 
                  enddo
 
@@ -373,8 +396,6 @@ c        coz = coz - boxz* dble(Idint((coz/boxz) +9999.5d0) - 9999)
 
                   enddo
 
-                  
-
            enddo
 
            write(io7,*)'sequence of beads in the molecule'
@@ -387,12 +408,25 @@ c        coz = coz - boxz* dble(Idint((coz/boxz) +9999.5d0) - 9999)
 
            enddo
 
+           do i = 1,bead_types
+
+           sigma_rmsd(1,i) = sigma_rmsd(1,i)/sigma_rmsd_cnt(i)
+
+           write(io7,*)'radius of the bead from atomic distribution'
+     &,i,sigma_rmsd(1,i)
+           
+           enddo
+           
            
             write(io7,*)'cg mapping completed'           
-           
+
+          
+           if(isubstitute.eq.1) then
+            close(fu_1)
+            else           
 
            close(io2)
-         
+            endif
            close(io3)
 
          end 

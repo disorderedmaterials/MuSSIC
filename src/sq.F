@@ -73,6 +73,8 @@ c summation of partial S(Q) to form total S(Q)
 
 
        call form_total(partialsq,totalsq,wbins,ntypes)
+       call form_total(bound_partialsq,total_boundsq,wbins,ntypes)
+       call form_total(unbound_partialsq,total_unboundsq,wbins,ntypes)
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc       
 c writes the partial S(Q) to a file named after the atom types       
@@ -118,7 +120,8 @@ c write the values to file
 
       do i = 1,wbins
 
-      write(io16,*)binw(i),totalsq(i)
+       write(io16,*)binw(i),totalsq(i),total_boundsq(i),
+     & total_unboundsq(i)
 
       enddo
 

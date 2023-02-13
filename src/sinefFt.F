@@ -9,9 +9,9 @@
 
         double precision data1(max_binr),data2(wbins+1),normfactor
         double precision ft,deltaX,omega,oldX(max_binr),oldY(max_binr),
-     &param,broaden,newX(wbins),newY(wbins),wind,wstep,omegamax
+     &param,broaden,wind,wstep,omegamax
 
-        integer*8 m,nX,cnt,n_bins
+        integer*8 m,cnt,n_bins
         character*40 broadening
         character*40 window
 

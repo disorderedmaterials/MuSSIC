@@ -23,7 +23,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'neutronsq.inc'
 
       integer*8 ii,jj,l,i,j,k,typej,typek,temp
-         double precision delta,radius(maxtyp),minimum
+         double precision delta,minimum,boxx1,boxy1,boxz1
 
 c     ... 5 total unweighted g(r)
       open (unit=io24,file='CG-unweighted-total.gr',status ='UNKNOWN',
@@ -49,13 +49,14 @@ c   initialize the bead size arrays to zero
 
          do i = 1,bead_types
 
-          if(iradius.eq.0) then
+          if(iradius.eq.0.) then
 
-         if(bonded(i).ne.0)then
+        
          sigma(1,i) = 0.0d0
          sigma(2,i) = 0.0d0
-         endif
+       
          sigma_cnt(i) = 0.0d0
+       
 
          endif
 
@@ -82,7 +83,7 @@ c   number of bins in Q-space
 ccccccccccccccccccccccccccccccccccccccccccccc
 c   define the bin values for rdf calculation
 
-            delta = bin_width/2.0d0
+          delta = bin_width/2.0d0
 
             do i = 1,maxbins
             binr(i) =  delta
@@ -126,7 +127,11 @@ c   define the bin values for Q-space depending on the binning regime
 cccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  finding the sequence of the beads in the molecule             
 
-           if(run_type.eq.'default') then               
+c           if(run_type.eq.'default') then               
+
+            boxx1 = boxx
+            boxy1 = boxy
+            boxz1 = boxz
 
            write(io7,*)' sequence of the beads in the molecule'
 c read number of atoms
@@ -165,9 +170,11 @@ c        write(io7,*)label(ii,i)
         close(io3)
       open (unit = io3, file = 'CG_trajectory',  status = 'unknown')
 
+        boxx = boxx1
+        boxy = boxy1
+        boxz = boxz1
 
-
-        endif
+c        endif
 
              
 
@@ -195,6 +202,7 @@ c initialisation of arrays
 
           enddo
          enddo
+
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  finding the exchangable atom types  and tagging them         
@@ -224,17 +232,12 @@ c  finding the exchangable atom types  and tagging them
               totalweightedgr(i) = 0.0d0
               enddo
 
-
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Label the beads that belong to same molecule. This helps computing
 c  the rdf correlations due to intramolecular beads
 
                 
-           
-
-                   do i = 1,num
-
-                     
+                    do i = 1,num
 
                      do j = 1,nbd(i)
 
@@ -243,20 +246,25 @@ c  the rdf correlations due to intramolecular beads
    
                 if(label(i,j).eq.label_bead(k)) model_type(i,j)= k
 
-                     
                         enddo
 
                        temp = model_type(i,j)
 
                         mol(temp) = i
 
-
-
-                       enddo
+                       
 
                        enddo
 
+                       enddo
 
+c                       write(io7,*)'molecule number for bead type'
+
+c                       do i = 1,bead_types
+c                       write(io7,*)i,mol(i)
+c                       enddo
+
+c                       stop
 
 
 
@@ -266,8 +274,6 @@ c  the rdf correlations due to intramolecular beads
 
                          
                          typej = model_type(i,j)
-
-                         
 
                             do k = 1,nbd(i)
 
@@ -284,6 +290,18 @@ c  the rdf correlations due to intramolecular beads
                             enddo
 
 
+                            write(io7,*)'intra flag'
+
+                            do i = 1,bead_types
+
+                            do j = 1,bead_types
+
+             write(io7,*)label_bead(i),label_bead(j),intra_flag(i,j)
+
+                            enddo
+                            enddo
+
+
                             do i = 1,num_iso
 
                             do j = 1, bead_types
@@ -292,29 +310,35 @@ c  the rdf correlations due to intramolecular beads
                             isotope_cg(i,j) = 0.0
                             natural_cg(i,j) = 1.0
 
+
                             do k = 1,num_atmtyp(j)
 
 
                               temp = atmtyp(j,k)
+                                         
 
-                              if(ex(temp).eq.1) ex_cg(i,j) = 1
+           if(ex(temp).eq.1) then
+            ex_cg(i,j) = 1
+           endif
+
+
          if(isotope(i,temp).gt.0.0) then
         isotope_cg(i,j) = isotope(i,temp)
         natural_cg(i,j) = 1.0 - isotope(i,temp)
          endif
 
+
         
-
                            enddo
 
                            enddo
 
                            enddo
-
-
 
                 
 
+               write(io7,*)'deuteration flag'
+               
                 do i = 1,num_iso
 
                      do j = 1,num
@@ -339,6 +363,8 @@ c  the rdf correlations due to intramolecular beads
                        endif
 
                endif
+
+c               write(io7,*)i,j,deut_flag(i,j)
 
                     enddo
 

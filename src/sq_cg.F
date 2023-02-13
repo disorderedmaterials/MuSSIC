@@ -74,6 +74,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
 c   summing the partial S(Q) to get total F_CG(Q)                  
 
        call form_total_cg(partialsq,totalsq,wbins)
+       call form_total_cg(bound_partialsq,total_boundsq,wbins)
+       call form_total_cg(unbound_partialsq,total_unboundsq,wbins)
 
 ccccccccccccccccccccccccccccccccccccccccccccccccc
 c   write partial S(Q) and total F_CG(Q) to files       
@@ -115,7 +117,8 @@ c   write partial S(Q) and total F_CG(Q) to files
 
       do i = 1,wbins
 
-      write(io26,*)binw(i),totalsq(i)
+      write(io26,*)binw(i),totalsq(i),total_boundsq(i),
+     & total_unboundsq(i)
 
       enddo
 

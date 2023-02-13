@@ -21,9 +21,10 @@ ccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'rdf.inc'
       include 'sq.inc'
       include 'neutronsq.inc'
+c      include 'manual.inc'
 
       integer*8 ii,jj,l,i,j,k,typej,typek,temp
-         double precision delta,minimum
+         double precision delta,minimum,boxx1,boxy1,boxz1
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc         
 
@@ -162,10 +163,28 @@ c    check for the exchangeables and mark the array 'ex(atom type)' as '1'
                    enddo
 
               enddo
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c   
+
+c         if(iradius.eq.0) then 
+         do i = 1,bead_types
+
+         sigma_rmsd(1,i) = 0.0d0
+         sigma_rmsd(2,i) = 0.0d0
+
+         sigma_rmsd_cnt(i) = 0.0d0
+
+         enddo
+c          endif
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c read number of atoms
+
+         boxx1 = boxx
+         boxy1 = boxy
+         boxz1 = boxz
         read(io2,*)natoms
+
         if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
         read(io2,*)boxx,boxy,boxz
         else
@@ -187,12 +206,16 @@ c loop over number of atoms to read x, y and z cordinates
 
         enddo
 
-             enddo
+        enddo
 
         enddo
 
         close(io2)
       open (unit = io2, file = 'trajectory',  status = 'unknown')
+
+        boxx = boxx1
+        boxy = boxy1
+        boxz = boxz1
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -201,9 +224,7 @@ c  the rdf correlations due to intramolecular atoms
 
                    do i = 1,num
 
-                     
-
-                     do j = 1,nat(i)
+                      do j = 1,nat(i)
 
 
                         do k = 1,ntypes
@@ -217,15 +238,13 @@ c  the rdf correlations due to intramolecular atoms
 
                         mol(temp) = i
 
-
-
-                       enddo
+c        write(io7,*)'mol num',i,'atm num',j,'type',temp,'mol',mol(temp)
 
                        enddo
 
+                       enddo
 
-
-
+              
 
                        do i = 1,num
 
@@ -235,7 +254,6 @@ c  the rdf correlations due to intramolecular atoms
                          typej = model_type(i,j)
 
                          
-
                             do k = 1,nat(i)
 
                             typek = model_type(i,k)
@@ -243,15 +261,17 @@ c  the rdf correlations due to intramolecular atoms
 
                             intra_flag(typej,typek) = 1
 
-
-
                             enddo
 
                             enddo
 
                             enddo
+
+
+
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   Assign  the  values of ratio of isotope to that atom type                 
+
 
                 do i = 1,num_iso
 
@@ -280,11 +300,30 @@ c   Assign  the  values of ratio of isotope to that atom type
 
                     enddo
 
+
+
                 enddo
 
                 enddo
 
 
+c            if(isubstitute.eq.1) then
+c               do i = 1,num_iso
+
+c           file_id = text2(i)
+
+
+c         filename1= 'trajectory' // trim(adjustl(file_id))
+
+c          fu_1 = 30+num_iso
+
+c          open(unit = fu_1,file=trim(filename1),status='unknown')
+
+c          enddo
+
+c           endif
               
-         end
+
+
+               end
 

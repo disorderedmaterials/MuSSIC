@@ -26,11 +26,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'sq.inc'
       include 'neutronsq.inc'
 
-           integer*8 i,j,k,int1,int2,ii,cnt
+           integer*8 i,j,k,int1,int2,ii,normal_factor,cnt
 
       double precision multiplier,norm,data_1(maxbins),data_2(max_binr),
      &bcd(ntypes),bj,bk,bc1,bc2,bc3,bc4,ratio1,ratio2,ratio,
-     &mix_ratio(bead_types),wt_factor
+     &mix_ratio(bead_types),wt_factor,test1(wbins),test2(wbins)
      
 
            character(len=10) file_id,label1,label2
@@ -38,13 +38,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
            integer*8 fu,fu1,fu2,deu_step,typej,typek,file_cnt,
      & mix_int,mix_flag(bead_types)
             double precision total_num,temp(maxtyp),temp1(maxtyp),
-     & temp2(maxtyp),self_term(wbins)
+     & temp2(maxtyp)
 
             avg_noa_bead = 0.0d0
 
-cccccccccccccccccccccccccccccc
+cccccccccccccccccccccccccccccccccccccc
 c   concentration of the beads
-cccccccccccccccccccccccccccccc
 
           do i = 1,bead_types
           c(i) = dble(nr(i))/dble(natoms)
@@ -52,15 +51,13 @@ cccccccccccccccccccccccccccccc
           avg_noa_bead = avg_noa_bead + noa_bead(i)*c(i)
           enddo
 
-cccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccc
 c  loop over number of isotopologues
-cccccccccccccccccccccccccccccccccccc
 
                do deu_step = 1,num_iso
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccc
-c   open the files according to the isotopologue name
-ccccccccccccccccccccccccccccccccccccccccccccccccccccc               
+c   open the files according to the isotopologue name               
 
                  file_id = text2(deu_step)
 
@@ -82,9 +79,6 @@ ccccccccccccccccccccccccccccccccccc
 
                  do i = 1,wbins
                  d_totalweightedsq(i) = 0.0d0
-                 d_totalboundsq(i) = 0.0d0
-                 d_totalunboundsq(i) = 0.0d0
-                 self_term(i) = 0.0d0
                  enddo
 
                  do i = 1,max_binr
@@ -146,20 +140,18 @@ c change the scattering length density for exchangeables
                     endif
                     enddo
 
-                    write(io7,*)'scattering lengths'
-
                     do i = 1,ntypes
 
                     if(ex(i).eq.1) bcd(i) = wt_factor/total_num
-
-                    write(io7,*)i,bcd(i),bc(i)
 
                     enddo
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  compute the effective scattering length density for each bead
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc                    
                     
+                    
+
+
               do i = 1,bead_types
 
                            temp(i) = 0.0d0
@@ -175,8 +167,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
             if(isotope(deu_step,int1).gt.0.0d0) then
         temp2(i) = temp2(i) + (num_atm_bead(i,k)*bc(ntypes+1))
-       
-
      
             else
          temp2(i) = temp2(i) + (num_atm_bead(i,k)*bc(int1))
@@ -186,13 +176,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
           enddo
 
-
           enddo
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c    add the flag to the exchangables and beads with isotope ratios          
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
                  do i = 1,bead_types
 
@@ -223,7 +211,6 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 ccccccccccccccccccccccccccccccccccccccccccc
 c compute weights for self scattering term         
-ccccccccccccccccccccccccccccccccccccccccccc
 
                 do i = 1,bead_types
 
@@ -277,6 +264,7 @@ ccccccccccccccccccccccccccccccccccccccccccc
 
 
           else
+
 
 
                  do j = 1,num_atmtyp(i)
@@ -367,7 +355,6 @@ ccccccccccccccccccccccccccccccccccccccccccc
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  compute weights for the inter molecular scattering term                      
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
                 
                       do i = 1,bead_types
@@ -380,24 +367,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
                       multiplier = 2.0d0
                        endif
 
+         weight1(i,j)=weight1(i,j)+(multiplier*c(i)*c(j)*
+     & temp(i)*temp(j))
 
-c        if(mix_ratio(i).lt.1.0)then
-
-c        term1 = (mix_ratio(i)*temp1(i)+(1.0-mix_ratio(i))*temp2(i))
-c        endif
-
-
-c        if(mix_ratio(j).lt.1.0)then
-c
-c        term2 = (mix_ratio(j)*temp1(j)+(1.0-mix_ratio(j))*temp2(j))
-c        endif
-        
-
-         weight1(i,j)=weight1(i,j)+  temp(i)*temp(j)
-
-
-
-   
 
                     enddo
                     enddo
@@ -405,21 +377,29 @@ c        endif
 ccccccccccccccccccccccccccccccccccccccccccccccccc
 c  compute weights for intra molecular scattering
 
-            do i = 1,num
 
-            if(deut_flag(deu_step,i).ne.2) then
+            do i = 1,num
 
             do j = 1,nbd(i)
 
+            ratio1 = 1.0
 
             typej = model_type(i,j)
 
+            if(mix_flag(typej).eq.1) then
+              ratio1 = mix_ratio(typej)
+            endif
+
             
-            do k = j,nbd(i)
+            do k = 1,nbd(i)
 
 
             typek = model_type(i,k)
+            ratio2 = 1.0
 
+            if(mix_flag(typek).eq.1) then
+                    ratio2 = mix_ratio(typek)
+              endif
             
             if(intra_flag(typej,typek).eq.0) cycle
 
@@ -430,107 +410,65 @@ c  compute weights for intra molecular scattering
              endif
 
             
+             if((ratio1.eq.1.0).and.(ratio2.eq.1.0)) then
 
       intra_weight(typej,typek) = intra_weight(typej,typek)+
      &(temp(typej)*temp(typek)*nmol(i))
        intra_norm(typej,typek) = intra_norm(typej,typek) +
      & (nmol(i))
 
-
-        enddo
-
-        enddo
-
-        else
+        elseif((ratio1.ne.1.0).and.(ratio2.eq.1.0)) then
 
 
-            do j = 1,nbd(i)
+       intra_weight(typej,typek) = intra_weight(typej,typek)+ 
+     &((ratio1*temp1(typej)+(1.0-ratio1)*temp2(typej))*temp(typek)
+     &*nmol(i))
+       intra_norm(typej,typek) = intra_norm(typej,typek) +
+     & (ratio1*nmol(i))
+       intra_norm(typej,typek) = intra_norm(typej,typek) +
+     & ((1.0d0-ratio1)*nmol(i))
 
+           elseif((ratio1.eq.1.0).and.(ratio2.ne.1.0)) then
 
-            typej = model_type(i,j)
+       intra_weight(typej,typek) = intra_weight(typej,typek)+ 
+     & ((ratio2*temp1(typek)+ (1.0-ratio2)*temp2(typek))*temp(typej)
+     & *nmol(i))
+        intra_norm(typej,typek) = intra_norm(typej,typek) +
+     & (ratio2*nmol(i))
+        intra_norm(typej,typek) = intra_norm(typej,typek) +
+     & ((1.0d0-ratio2)*nmol(i))
 
+          elseif((ratio1.ne.1.0).and.(ratio2.ne.1.0)) then
 
-            if(ex_cg(deu_step,typej).eq.1) then
-             bj = temp(typej)
-               else
-             bj = temp1(typej)
+      intra_weight(typej,typek)=intra_weight(typej,typek)+
+     &(ratio1*temp1(typej)*temp1(typek)*nmol(i))
 
-               endif
+      intra_weight(typej,typek)=intra_weight(typej,typek)+
+     &((1.0-ratio1)*temp2(typej)*temp2(typek)*nmol(i))
 
+      intra_norm(typej,typek) = intra_norm(typej,typek) +
+     & (ratio1*nmol(i))
+      intra_norm(typej,typek) = intra_norm(typej,typek) +
+     & ((1.0d0-ratio1)*nmol(i))
 
-               do k = j,nbd(i)
+c      intra_weight(typej,typek)=intra_weight(typej,typek)+
+c     &(ratio2*temp1(typej)*temp1(typek)*nmol(i))
 
+c      intra_weight(typej,typek)=intra_weight(typej,typek)+((1.0-ratio2)
+c     &*temp2(typej)*temp2(typek)*nmol(i))
 
-            typek = model_type(i,k)
+c      intra_norm(typej,typek) = intra_norm(typej,typek) +
+c     & (ratio2*nmol(i))
+c      intra_norm(typej,typek) = intra_norm(typej,typek) +
+c     & ((1.0d0-ratio2)*nmol(i))
 
+           endif
 
+           enddo
 
-            if(ex_cg(deu_step,typek).eq.1) then
+           enddo
 
-                    bk = temp(typek)
-             else
-                     bk = temp1(typek)
-             endif
-
-             if(intra_flag(typej,typek).eq.0) cycle
-
-             intra_weight(typej,typek) = intra_weight(typej,typek)+
-     & (nmol(i)*(1.0d0-iso_fraction(deu_step,i))*bj*bk)
-             intra_norm(typej,typek) = intra_norm(typej,typek) +
-     & ((1.0d0-iso_fraction(deu_step,i))*nmol(i))
-
-        
-              enddo
-
-              enddo
-
-            do j = 1,nbd(i)
-
-             typej = model_type(i,j)
-
-             if(ex_cg(deu_step,typej).eq.1) then
-
-                     bj = temp(typej)
-               else
-
-              if(isotope_cg(deu_step,typej).gt.0.0d0) then
-                      bj = temp2(typej)
-              else
-                      bj = temp1(typej)
-              endif
-              endif
-
-
-             do k = j,nbd(i)
-
-             typek = model_type(i,k)
-
-             if(ex_cg(deu_step,typek).eq.1) then
-
-                     bk = temp(typek)
-             else
-             if(isotope_cg(deu_step,typek).gt.0.0d0)then
-                     bk = temp2(typek)
-             else
-                     bk = temp1(typek)
-             endif
-             endif
-
-             if(intra_flag(typej,typek).eq.0) cycle
-
-             intra_weight(typej,typek) = intra_weight(typej,typek)+
-     & (nmol(i)*iso_fraction(deu_step,i)*bj*bk)
-             intra_norm(typej,typek) = intra_norm(typej,typek) +
-     & (iso_fraction(deu_step,i)*nmol(i))
-
-             enddo
-
-             enddo
-
-              endif
-
-              enddo
-         
+           enddo
                    
             
            write(io7,*)'INTRA_WEIGHT matrix'
@@ -538,11 +476,11 @@ c  compute weights for intra molecular scattering
            do i = 1,bead_types
            do j = 1,bead_types
 
-           if (i.eq.j) then
-              multiplier = 1.0d0
-           else
-              multiplier = 2.0d0
-           endif
+c           if (i.eq.j) then
+c              multiplier = 1.0d0
+c           else
+c              multiplier = 2.0d0
+c           endif
 
            if(intra_flag(i,j).eq.1) then
 
@@ -554,7 +492,7 @@ c           if(intra_norm(i,j).eq.0.0d0) cycle
 c       write(io7,*)deu_step,i,j,intra_weight(i,j)
 c        intra_weight(i,j) = intra_weight(i,j)*multiplier *c(i)*c(j)
 
-        write(io7,*)deu_step,i,j,intra_weight(i,j)*c(i)*c(j)*multiplier
+        write(io7,*)deu_step,i,j,intra_weight(i,j)
 
             endif
 
@@ -562,27 +500,6 @@ c        intra_weight(i,j) = intra_weight(i,j)*multiplier *c(i)*c(j)
 
             enddo
 
-
-            
-           write(io7,*)'INTER_WEIGHT matrix'
-
-           do i = 1,bead_types
-           do j = 1,bead_types
-
-           
-
-            if(i.eq.j) then
-                    multiplier = 1.0d0
-            else
-                    multiplier = 2.0d0
-              endif
-
-        write(io7,*)deu_step,i,j,weight1(i,j)*c(i)*c(j)*multiplier
-
-
-            enddo
-
-            enddo
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c weighted sum of partial S(Q) using the weights calculated above            
@@ -594,13 +511,7 @@ c weighted sum of partial S(Q) using the weights calculated above
 
        d_totalweightedsq(k)=d_totalweightedsq(k)+((weight(i)*FF(i,k)**2)
      &*(1.0d0/avg_noa_bead))
-
-       self_term(k) = self_term(k) + ((weight(i)*FF(i,k)**2)
-     &*(1.0d0/avg_noa_bead))
-
  
-c       d_totalunboundsq(k)=d_totalunboundsq(k)+((weight(i)*FF(i,k)**2)
-c     &*(1.0d0/avg_noa_bead))
         enddo
         
 
@@ -619,21 +530,12 @@ c     &*(1.0d0/avg_noa_bead))
 
 
 
-c      d_weightedsq(i,j,k)= (partialsq(i,j,k)*weight1(i,j))
-c    &*c(i)*c(j)*multiplier*FF(i,k)*FF(j,k)*(1.0d0/avg_noa_bead)
+       d_weightedsq(i,j,k)= ((unbound_partialsq(i,j,k)*weight1(i,j))+
+     &(bound_partialsq(i,j,k)*intra_weight(i,j)*c(i)*c(j)*multiplier))*
+     &FF(i,k)*FF(j,k)*(1.0d0/avg_noa_bead)
 
-       d_unbound_wsq(i,j,k)= (unbound_partialsq(i,j,k)*weight1(i,j))
-     &*c(i)*c(j)*multiplier*FF(i,k)*FF(j,k)*(1.0d0/avg_noa_bead)
-
-       d_bound_wsq(i,j,k)= (bound_partialsq(i,j,k)*intra_weight(i,j)
-     &*c(i)*c(j)*multiplier)*FF(i,k)*FF(j,k)*(1.0d0/avg_noa_bead)
-
-       d_weightedsq(i,j,k) = d_unbound_wsq(i,j,k) + d_bound_wsq(i,j,k) 
         
-       d_totalweightedsq(k) = d_totalweightedsq(k)+d_bound_wsq(i,j,k)+
-     & d_unbound_wsq(i,j,k)
-       d_totalboundsq(k) = d_totalboundsq(k) + d_bound_wsq(i,j,k)
-       d_totalunboundsq(k)=d_totalunboundsq(k)+ d_unbound_wsq(i,j,k)
+       d_totalweightedsq(k) = d_totalweightedsq(k) + d_weightedsq(i,j,k)
          
                   enddo
 
@@ -670,8 +572,7 @@ c  write partial S(Q) and F(Q) to the files
 
               do k = 1,wbins
 
-       write(fu,*)binw(k),d_weightedsq(i,j,k),d_bound_wsq(i,j,k),
-     & d_unbound_wsq(i,j,k)
+       write(fu,*)binw(k),d_weightedsq(i,j,k)
        
 
                enddo
@@ -680,8 +581,7 @@ c  write partial S(Q) and F(Q) to the files
 
         do i = 1,wbins
 
-        write(fu1,*)binw(i),d_totalweightedsq(i),d_totalboundsq(i),
-     & d_totalunboundsq(i),self_term(i)
+        write(fu1,*)binw(i),d_totalweightedsq(i)
 c        write(153,*)deu_step,binw(i),test1(i)
 
         enddo

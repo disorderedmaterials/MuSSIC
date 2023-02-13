@@ -19,10 +19,9 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'iochan.h'
       include 'rdf.inc'
 
-      integer*8 i,j,k,l,ii,file_cnt,fu
+      integer*8 i,j,k,file_cnt,fu
       character*10 label1,label2
       character*100 file_name
-      double precision xCentre,newY(nbins),param,broaden,xtemp,norm
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccc      
 c    normalize histogram values to from partial g(r)

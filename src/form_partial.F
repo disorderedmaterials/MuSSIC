@@ -42,7 +42,7 @@ c        factor = nr(i)*shell_volume*number_density
 
          if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
 
-
+     
         data2(i,j,k)=(data1(i,j,k)*(multiplier/shell_volume))/frame(k)
 
         else

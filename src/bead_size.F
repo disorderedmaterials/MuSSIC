@@ -20,7 +20,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'model.inc'
       include 'rdf.inc'
 
-        integer*8 i,j,max_loc(1)
+        integer*8 i,j
         double precision tempr(max_binr)
 
 cccccccccccccccccccccccccccccccccccccccccccccc
@@ -29,11 +29,16 @@ c    normalize the bead size
 
          do i = 1,bead_types
 
+c          if(iradius.eq.0.and.run_type.eq.'default') then
           if(iradius.eq.0) then
 
          if(bonded(i).ne.0) then
-         sigma(1,i) = sigma(1,i)/(2.0d0*sigma_cnt(i))
-         sigma(2,i) = sigma(2,i)/(2.0d0*sigma_cnt(i))
+           sigma(1,i) = sigma(1,i)/sigma_cnt(i)
+
+c           write(*,*)i,sigma(1,i),sigma_cnt(i)
+
+c         sigma(1,i) = sigma(1,i)/(2.0d0*sigma_cnt(i))
+c         sigma(2,i) = sigma(2,i)/(2.0d0*sigma_cnt(i))
             sigma(2,i) = sigma(1,i)**2
          elseif(bonded(i).eq.0) then
 
@@ -48,11 +53,19 @@ c    normalize the bead size
 
            endif
 
+         
+         if(run_type.eq.'compare_CG') then
+
+          sigma(1,i) = sigma_rmsd(1,i)
+
+         endif
+
          std_dev(i) = dsqrt(sigma(2,i) - sigma(1,i)**2)
 
-         write(io7,*)'sigma',sigma(1,i),std_dev(i)
+         write(io7,*)'bead radius for',label_bead(i),'is',sigma(1,i)
 
          enddo
+
 
          
 ccccccccccccccccccccccccccccccccccccc

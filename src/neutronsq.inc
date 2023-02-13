@@ -11,7 +11,8 @@ C neutronsq.inc
 
        double precision d_weightedsq(maxtyp,maxtyp,maxbins),
      & d_weightedgr(maxtyp,maxtyp,maxbins),d_totalweightedsq(maxbins),
-     & d_totalweightedgr(maxbins),d_Gr(maxbins)
+     & d_totalweightedgr(maxbins),d_Gr(maxbins),
+     &d_totalboundsq(maxbins),d_totalunboundsq(maxbins)
 
        double precision d_bound_wsq(maxtyp,maxtyp,maxbins),
      & d_unbound_wsq(maxtyp,maxtyp,maxbins)
@@ -27,7 +28,7 @@ C neutronsq.inc
        common/ neu2/ bound_wsq,unbound_wsq
 
        common/neu3/ d_weightedsq,d_weightedgr,d_totalweightedsq,
-     & d_totalweightedgr,d_Gr
+     & d_totalweightedgr,d_Gr,d_totalboundsq,d_totalunboundsq
        common/ neu4/ d_bound_wsq,d_unbound_wsq
 
        common/ neu5/ intra_weight,weight,weight1,intra_norm

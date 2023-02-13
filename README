@@ -2,8 +2,16 @@
 -----------------------
 Description of the Code
 -----------------------
-This code computes the partial pair radial distribution function and the partial pair structure factors for the trajectory provided in xyz file format.
-The total struture factor is obtained by summing all  partial pair contributions.
+MuSSIC is a computational tool  for calculation of neutron scattering for coarse grain (CG) systems.
+It is based on the method described by Alan Soper in his journal article on coarse-grained Empirical Potential Structure Refinement
+(Biochimica et Biophysica Acta 1861, 6,2017,Pages 1652-1660).
+The code has been tested for different coarse grain models on surfactants in water to complex polymer melt systems(examples included in usability_tests/). 
+Further usability tests on different systems are being conducted to test the generality and applicability of the method to other systems.
+The current version of the code (v1.0) can be  used on polymer metls or surfactants forming micelles (like SDS, PEG and CTAB). 
+Any development  or improvement in the code/method will be updated on Github (link to the page).
+The code computes the partial pair radial distribution functions and the partial pair structure factors for the trajectory provided in xyz file format. 
+The total struture factor F_Cg(Q) is the weighted sum of all  partial pair structure factors(detailed notes is given in the documentation).
+The userguide 'MuSSIC_user_guide' provide details on compilation, input files and output files.
 
 -----
 usage
@@ -16,7 +24,7 @@ INPUT files
 -----------
 input.dat    -  main input file (details explained below).
 model.dat    -  model parameters of the system.
-trajectory   -  xyz file
+CG_trajectory   -  coarse-grained trajectory in xyz format 
 
 ------------
 OUTPUT files
@@ -65,11 +73,11 @@ scattering_lengths: # bound coherent scattering lenghts for the calculation of n
 -3.739d0
 6.671d0
 exchangeable_atoms:
-2                    # number of excangeable atoms
+2                    # number of exchangeable atoms
 HW                   # atoms labels of exchangeables
 HO
 number_isotopologues:
-7
+1
 isotopologues:       # description of isotope ratio for all atom types in the isotopologue (not relevant but provide  1.0 for all  natural and 0.0 to isotope)
 sample_1
 atom    natural   isotope
@@ -79,6 +87,12 @@ CT       1.0      0.0
 HC       1.0      0.0
 OH       1.0      0.0
 HO       1.0      0.0
+Isotopic_substitution:
+manual                # isotopic substitution can be implemented either by choosing                    
+                              ‘manual’ or ‘ratios’
+                           #  ‘manual’ option is be used to generate manually deuterated trajectories. Test case 4 shown in the documentation explains the results with manual deuteration for PA66. While the test case 5 shows the results obtained using ‘ratios’ option for C10TAB in water (Refer to verification tests in the documentation)
+ (note: the current version of the code supports only one isotope of the atoms and only one isotopologue can be tested per run if using manual substitution)
+
 qmin:                # Q minimum for the calculation S(Q)
 0.1d0
 qdelta:              # bin width for Q in (1/Angstroms)

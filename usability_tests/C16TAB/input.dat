@@ -1,1 +1,63 @@
-
+run:
+default
+nproc:
+20
+title:
+C16TAB+water
+ntypes:
+6
+nframes:
+1
+box_length:
+299.82133436074162        299.82133436074162        299.82133436074162
+bin_width:
+0.03d0
+ensemble:
+NPT
+label_atom:
+N
+C
+HC
+BR
+OW
+HW
+scattering_lengths:
+9.36d0
+6.646d0
+-3.739d0
+6.795d0
+5.803d0
+-3.739d0
+6.671d0
+form_factor:
+Gaussian
+exchangeable_atoms:
+0
+number_isotopologues:
+1
+isotopologues:
+sample_1   HD
+atom	natural   isotope
+N        1.0      0.0
+C        1.0      0.0
+HC       1.0      0.0
+BR       1.0      0.0
+OW       1.0      0.0
+HW       0.0      1.0
+isotopic_substitution
+ratios
+qmin:
+0.02d0
+qdelta:
+0.02d0
+qmax:
+5.0d0
+binning:
+log_linear
+broadening:
+OmegaDependentGaussian
+FWHM:
+0.02d0
+windowfn:
+Lorch0
+endinput

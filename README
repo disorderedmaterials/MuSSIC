@@ -10,7 +10,7 @@ Further usability tests on different systems are being conducted to test the gen
 The current version of the code (v1.0) can be  used on polymer metls or surfactants forming micelles (like SDS, PEG and CTAB). 
 Any development  or improvement in the code/method will be updated on Github (link to the page).
 The code computes the partial pair radial distribution functions and the partial pair structure factors for the trajectory provided in xyz file format. 
-The total struture factor F_Cg(Q) is the weighted sum of all  partial pair structure factors(detailed notes is given in the documentation).
+The total struture factor F_CG(Q) is the weighted sum of all  partial pair structure factors(detailed notes is given in the documentation).
 The userguide 'MuSSIC_user_guide' provide details on compilation, input files and output files.
 
 -----

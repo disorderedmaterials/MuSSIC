@@ -16,7 +16,7 @@ The total struture factor F_CG(Q) is the weighted sum of all  partial pair struc
 The userguide 'MuSSIC_user_guide' provide details on compilation, input files and output files.
 
 -----
-# user guide
+# User guide
 -----
 Detailed user guide together with comprehensive examples is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_user_guide.pdf)
 

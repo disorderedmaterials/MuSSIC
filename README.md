@@ -20,6 +20,8 @@ usage
 -----
 Detailed user guide together with comprehensive examples is available [here]
 Compile the code by typing 'make' in the sourcecode and copy the executable 'scattcg' to the desired folder to run the simulations
+> cd source_code
+
 >make
 
 >cp scattcg /desired_location

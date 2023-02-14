@@ -16,7 +16,7 @@ The total struture factor F_CG(Q) is the weighted sum of all  partial pair struc
 The userguide 'MuSSIC_user_guide' provide details on compilation, input files and output files.
 
 -----
-usage
+# user guide
 -----
 Detailed user guide together with comprehensive examples is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_user_guide.pdf)
 
@@ -32,7 +32,7 @@ Compile the code by typing 'make' in the sourcecode and copy the executable 'sca
 >./scattcg
 
 -------------
-Documentation
+# Documentation
 -------------
 Documentation on the neutron scattering calculation for coarse grained simulations and validation tests is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_documentation.pdf)
 

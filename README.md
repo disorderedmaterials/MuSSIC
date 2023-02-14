@@ -1,4 +1,4 @@
-(icon/MuSSIC_logo.png)
+(logo/MuSSIC_logo.png)
 
 # MuSSIC
 -----------------------

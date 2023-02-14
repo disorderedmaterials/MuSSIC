@@ -1,3 +1,5 @@
+![MuSSIC's Logo](icon/MuSSIC_logo.png)
+
 # MuSSIC
 -----------------------
 Description of the Code
@@ -16,6 +18,7 @@ The userguide 'MuSSIC_user_guide' provide details on compilation, input files an
 -----
 usage
 -----
+Detailed user guide together with comprehensive examples is available at 
 To compile the code, type 'make'
 To run the code, type './scattcg'
 

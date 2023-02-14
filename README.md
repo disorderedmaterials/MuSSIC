@@ -34,7 +34,9 @@ Compile the code by typing 'make' in the sourcecode and copy the executable 'sca
 INPUT files
 -----------
 input.dat    -  main input file (details explained below).
+
 model.dat    -  model parameters of the system.
+
 CG_trajectory   -  coarse-grained trajectory in xyz format 
 
 ------------

@@ -1,4 +1,4 @@
-(logo/MuSSIC_logo.png)
+![MuSSIC's Logo](logo/MuSSIC_logo.png)
 
 # MuSSIC
 -----------------------

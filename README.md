@@ -18,7 +18,7 @@ The userguide 'MuSSIC_user_guide' provide details on compilation, input files an
 -----
 usage
 -----
-Detailed user guide together with comprehensive examples is available [here]
+Detailed user guide together with comprehensive examples is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_user_guide.pdf)
 
 Compile the code by typing 'make' in the sourcecode and copy the executable 'scattcg' to the desired folder to run the simulations
 > cd source_code

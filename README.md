@@ -18,9 +18,12 @@ The userguide 'MuSSIC_user_guide' provide details on compilation, input files an
 -----
 usage
 -----
-Detailed user guide together with comprehensive examples is available at 
-To compile the code, type 'make'
-To run the code, type './scattcg'
+Detailed user guide together with comprehensive examples is available [here]
+Compile the code by typing 'make' in the sourcecode and copy the executable 'scattcg' to the desired folder to run the simulations
+>make
+>cp scattcg /desired_location
+>cd /desired_location
+>./scattcg
 
 -----------
 INPUT files

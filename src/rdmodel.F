@@ -149,7 +149,7 @@ c      number of atom types in CG bead  and the number of atoms of each atom typ
        elseif(line(1:21).eq.'num_atom_types_CGbead')then
        write(io7,*)'number of atoms types per CG bead'
        do i = 1,bead_types
-       noa_bead(i) = 0
+       noa_bead(i) = 0.0d0
        read(io00,*)num_atmtyp(i)
        write(io7,*)num_atmtyp(i)
        write(io7,*)' atom type and the number of those atoms in

@@ -91,7 +91,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
             num1 = num
            
             do i = 1,num
-c            nbd2(i) = nbd(i)
+            nbd2(i) = nbd(i)
+            nat2(i) = nat(i)
             nmol2(i) = nmol(i)
             nmol1(i) = nmol1(i)
             enddo
@@ -130,6 +131,8 @@ c            nbd2(i) = nbd(i)
 
                  ntypes1 = ntypes1 + 1
                   num1 = num1 + 1
+                  nat2(num1) = nat(imol)
+                  nbd2(num1) = nbd(imol)
           label_type(ntypes1) = label_type(i)
           label_type(ntypes1)(1:1) = 'D'
 
@@ -159,7 +162,6 @@ c            nbd2(i) = nbd(i)
            enddo
 
 c               bead_sec(num1)= bead_sec(imol)
-               nbd(num1) = nbd(imol)
 
 c                 do j = 1,bead_sec(num1)
 c                 bead_num(num1,j) = bead_num(imol,j)

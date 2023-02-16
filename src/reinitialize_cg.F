@@ -83,7 +83,7 @@ c           noex = noex1
            enddo
 
 
-           write(io7,*)'number of echangeables',noex
+           write(io7,*)'number of exchangeables',noex
            do i = 1,noex
            write(io7,*)ex(i)
            enddo
@@ -107,11 +107,11 @@ c           noex = noex1
            endif
 
 
-           write(io7,*)'bead rradius from atomic distribution'
+c           write(io7,*)'bead radius from atomic distribution'
 
-         do i = 1,bead_types
-         write(io7,*)sigma_rmsd(1,i)
-         enddo
+c         do i = 1,bead_types
+c         write(io7,*)sigma_rmsd(1,i)
+c         enddo
 
            if(ibonded.eq.1) then
 
@@ -121,7 +121,7 @@ c           noex = noex1
 
         write(io7,*)'number of atoms types per CG bead'
        do i = 1,bead_types
-       noa_bead(i) = 0
+       noa_bead(i) = 0.0d0
        write(io7,*)num_atmtyp(i)
        write(io7,*)' atom type and the number of those atoms in
      & the bead'

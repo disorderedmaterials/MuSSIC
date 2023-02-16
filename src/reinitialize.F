@@ -120,7 +120,7 @@ c           noex = noex1
 
         write(io7,*)'number of atoms types per CG bead'
        do i = 1,bead_types
-       noa_bead(i) = 0
+       noa_bead(i) = 0.0d0
        write(io7,*)num_atmtyp(i)
        write(io7,*)' atom type and the number of those atoms in
      & the bead'

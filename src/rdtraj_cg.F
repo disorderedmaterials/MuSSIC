@@ -21,7 +21,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccc
       include 'iochan.h'
       include 'model.inc'
 
-      integer*8 temp,i,j
+      integer*8 temp,i,j,is,fu_1,l,ii,jj
 
       double precision minimum
 
@@ -30,6 +30,38 @@ C********************************
 C**** Read- trajectory file *****
 C********************************
 C**** Read configuration data ***
+        if(isubstitute.eq.1) then
+
+        do is = 1,num_iso
+
+        fu_1 = 120 + is
+
+        read(fu_1,*)natoms
+        if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
+        read(fu_1,*)boxx,boxy,boxz
+        else
+        read(fu_1,*)
+        endif
+
+        l = 0
+        do ii = 1,num
+
+             do jj = 1,nmol(ii)
+
+c loop over number of atoms to read x, y and z cordinates
+        do i = 1,nbd(ii)
+        l = l + 1
+        read(fu_1,*)label_atom(l),x(l),y(l),z(l)
+
+        enddo
+
+        enddo
+
+        enddo
+
+        enddo
+
+         else
 
 
 c read number of beads
@@ -47,6 +79,8 @@ c loop over number of beads to read x, y and z cordinates
         read(io3,*)label_atom(i),x(i),y(i),z(i)
         
         enddo
+
+        endif
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c initialize the nr to zeros ( matrix giving the number of beads per  bead type)  

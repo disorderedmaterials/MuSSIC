@@ -26,11 +26,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'sq.inc'
       include 'neutronsq.inc'
 
-           integer*8 i,j,k,int1,int2,ii,cnt
+           integer*8 i,j,k,int1,int2,ii
 
       double precision multiplier,norm,data_1(maxbins),data_2(max_binr),
      &bcd(ntypes),bj,bk,bc1,bc2,bc3,bc4,ratio1,ratio2,ratio,
-     &mix_ratio(bead_types),wt_factor
+     &mix_ratio(bead_types),wt_factor,cnt
      
 
            character(len=10) file_id,label1,label2
@@ -129,19 +129,19 @@ c change the scattering length density for exchangeables
                    do i = 1,ntypes
                    if(ex(i).eq.1) then
 
-                           cnt = 0 
+                           cnt = 0.0d0 
 
                            do j = 1,bead_types
 
                            do k = 1,num_atmtyp(j)
 
-            if(i.eq.atmtyp(j,k)) cnt = cnt + nr(j)*num_atm_bead(j,k)
+            if(i.eq.atmtyp(j,k)) cnt =cnt+dble(nr(j))*num_atm_bead(j,k)
 
                            enddo
                            enddo 
 
-                          wt_factor = wt_factor + dble(cnt)*bcd(i)
-                          total_num = total_num + dble(cnt)
+                          wt_factor = wt_factor + cnt*bcd(i)
+                          total_num = total_num + cnt
 
                     endif
                     enddo
@@ -554,7 +554,9 @@ c           if(intra_norm(i,j).eq.0.0d0) cycle
 c       write(io7,*)deu_step,i,j,intra_weight(i,j)
 c        intra_weight(i,j) = intra_weight(i,j)*multiplier *c(i)*c(j)
 
+         if(i.le.j) then
         write(io7,*)deu_step,i,j,intra_weight(i,j)*c(i)*c(j)*multiplier
+         endif
 
             endif
 
@@ -577,7 +579,10 @@ c        intra_weight(i,j) = intra_weight(i,j)*multiplier *c(i)*c(j)
                     multiplier = 2.0d0
               endif
 
+              if(i.le.j) then
+
         write(io7,*)deu_step,i,j,weight1(i,j)*c(i)*c(j)*multiplier
+               endif
 
 
             enddo

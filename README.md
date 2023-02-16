@@ -20,6 +20,8 @@ The userguide 'MuSSIC_user_guide' provide details on compilation, input files an
 -----
 Detailed user guide together with comprehensive examples is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_user_guide.pdf)
 
+MuSSIC is wriiten in FORTRAN and requires gfortran compiler with openmp support for parallel implementation. 
+
 Compile the code by typing 'make' in the sourcecode and copy the executable 'scattcg' to the desired folder to run the simulations
 > cd source_code
 
@@ -34,5 +36,7 @@ Compile the code by typing 'make' in the sourcecode and copy the executable 'sca
 -------------
 # Documentation
 -------------
+
 Documentation on the neutron scattering calculation for coarse grained simulations and validation tests is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_documentation.pdf)
+Documentation on the tests from coarse-grained simulations is a work in progess. Details will be added as the work progresses.
 

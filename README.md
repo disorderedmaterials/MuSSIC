@@ -23,7 +23,6 @@ Detailed user guide together with example input files is available [here](https:
 MuSSIC is wriiten in FORTRAN and requires gfortran compiler with openmp support for parallel implementation. 
 
 Compile the code by typing 'make' in the sourcecode and copy the executable 'scattcg' to the desired folder to run the simulations
-> cd source_code
 
 >make
 

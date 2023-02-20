@@ -15,5 +15,5 @@ set xlabel "Q(1/\305)"
 set ylabel " F_{CG}(Q) (barn sr^{-1} atom^{-1})"
 #plot the graphic
 plot   'HD-CG-weighted-total.sq' using 1:($2*0.1+1.0)  with linespoints  title "   4 carbon atoms per CG bead "  lw 2 linecolor 'blue' pointtype 7 pointsize 1.0, \
-       'SANS-2d.dat' using 1:($2+1.0)  with linespoints  title " atomistic "  lw 2 linecolor 'red' pointtype 7 pointsize 1.0
+       'SANS-2d.dat' using 1:($2+1.0)  with linespoints  title " SANS-2d "  lw 2 linecolor 'red' pointtype 7 pointsize 1.0
 

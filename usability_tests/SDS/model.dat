@@ -21,10 +21,10 @@ beads_per_molecule
 1
 1
 bead_radius
-2.43d0
-2.66d0
-2.46d0
-0.707d0
+4.5d0
+4.5d0
+4.5d0
+0.2d0
 2.4d0
 num_atom_types_CGbead
 2
@@ -37,7 +37,7 @@ num_atom_types_CGbead
 4     4    
 5     9    
 1
-1     1    
+1     1
 2
 6     4    
 7     8    

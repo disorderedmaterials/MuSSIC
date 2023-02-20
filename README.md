@@ -37,6 +37,7 @@ Compile the code by typing 'make' in the sourcecode and copy the executable 'sca
 # Documentation
 -------------
 
-Documentation on the neutron scattering calculation for coarse grained simulations and validation tests is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_documentation.pdf)
+Documentation on the neutron scattering calculation for coarse grained simulations and validation tests is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_documentation.pdf).
+
 Documentation on the tests from coarse-grained simulations is a work in progess. Details will be added as the work progresses.
 

@@ -28,13 +28,18 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       double precision Dx,Dy,Dz,distance
       double precision hist_local(bead_types,bead_types,max_binr),
      &bound_hist_local(bead_types,bead_types,max_binr)
+      double precision sigma_local(2,bead_types),
+     &sigma_cnt_local(bead_types)
 
 
          do i = 1,bead_types
+
+         sigma_local(1,i)= 0.0d0
+         sigma_local(2,i) = 0.0d0
+         sigma_cnt_local(i) = 0.0d0
+
            do j = 1,bead_types
             do k = 1,max_binr
-
-            
 
         hist_local(i,j,k) = 0.0d0
         bound_hist_local(i,j,k) = 0.0d0
@@ -52,8 +57,6 @@ c       write(io7,*)'rdf calculation'
 c       write(io7,*)'self terms'
 
       do i = 1,bead_types
-
-
 
          temp = nr(i)
 
@@ -211,17 +214,17 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
                 el = bl+nbd(i)-1
  
 
-                xcgpbc(bl) = bead_x(bl)
-                ycgpbc(bl) = bead_y(bl)
-                zcgpbc(bl) = bead_z(bl)
+                xcgpbc(bl) = x(bl)
+                ycgpbc(bl) = y(bl)
+                zcgpbc(bl) = z(bl)
 
                 do jj = bl+1,el
 
 
 
-                     Dx = bead_x(jj) - xcgpbc(jj-1)
-                     Dy = bead_y(jj) - ycgpbc(jj-1)
-                     Dz = bead_z(jj) - zcgpbc(jj-1)
+                     Dx = x(jj) - xcgpbc(jj-1)
+                     Dy = y(jj) - ycgpbc(jj-1)
+                     Dz = z(jj) - zcgpbc(jj-1)
 
 
 Ccccccccccccccccccccccc
@@ -237,8 +240,8 @@ Ccccccccccccccccccccccc
                 ycgpbc(jj) = ycgpbc(jj-1) +Dy
                 zcgpbc(jj) = zcgpbc(jj-1) +Dz
 
-c      write(io7,*)jj,xcgpbc(jj),ycgpbc(jj),zcgpbc(jj),
-c     & dsqrt(Dx**2+Dy**2+Dz**2)
+c     write(io7,*)jj,xcgpbc(jj),ycgpbc(jj),zcgpbc(jj),
+c    & dsqrt(Dx**2+Dy**2+Dz**2)
 
                 enddo
 
@@ -246,7 +249,7 @@ c     & dsqrt(Dx**2+Dy**2+Dz**2)
 
                 enddo
 
-
+             
 c            write(io7,*)'intra molecular pairs'
 
              bl_init = 0
@@ -266,11 +269,13 @@ c            write(io7,*)'intra molecular pairs'
                 if(nbd(i).gt.1) then
 
 c$omp parallel
-c$omp& shared ( i,nmol,nat,itype,boxx,boxy,boxz,bin_width,nbins)
+c$omp& shared (i,nmol,nat,itype,boxx,boxy,boxz,bin_width,nbins)
 c$omp& shared (xcgpbc,ycgpbc,zcgpbc,max_binr,cutoff,bl_init)
+c$omp& shared (iradius,ibonded,bead_pair)
 c$omp& private ( j,bl,el,jj,kk,typeJ,typeK,Dx,Dy,Dz,distance,bin )
 
-c$omp do  reduction ( + : bound_hist_local )
+c$omp do  reduction ( + : bound_hist_local,sigma_local,sigma_cnt_local)
+
             
                   do j = 1,nmol(i)
 
@@ -315,7 +320,8 @@ c                Dy = Dy - boxy*nint(Dy/boxy)
 c                Dz = Dz - boxz*nint(Dz/boxz)
 
              distance = dsqrt(Dx**2+Dy**2+Dz**2)
-
+          
+c              write(io7,*)'distance',distance,itype(jj),itype(kk)
 
              bin = ceiling(distance/bin_width)
 
@@ -325,21 +331,28 @@ c                Dz = Dz - boxz*nint(Dz/boxz)
      & bound_hist_local(typeJ,typeK,bin)+1.0d0
         
           
-           if(iradius.eq.0) then
+           if(iradius.eq.0.and.ibonded.eq.1) then
           if(bead_pair(typeJ,typeK).eq.1.and.(kk.eq.jj+1)) then
+
 
 
 c           write(io7,*)typeJ,typeK,distance,'bead size'
 
-           sigma(1,typeJ) = sigma(1,typeJ) + (distance)
-           sigma(2,typeJ) = sigma(2,typeJ) + (distance)**2
+           sigma_local(1,typeJ) = sigma_local(1,typeJ) + (distance)
+           sigma_local(2,typeJ) = sigma_local(2,typeJ) + (distance)**2
 
 
-           sigma(1,typeK) = sigma(1,typeK) + (distance)
-           sigma(2,typeK) = sigma(2,typeK) + (distance)**2
+           sigma_local(1,typeK) = sigma_local(1,typeK) + (distance)
+           sigma_local(2,typeK) = sigma_local(2,typeK) + (distance)**2
 
-           sigma_cnt(typeJ) = sigma_cnt(typeJ) + 1.0d0
-           sigma_cnt(typeK) = sigma_cnt(typeK) + 1.0d0
+           
+
+           sigma_cnt_local(typeJ) = sigma_cnt_local(typeJ) + 1.0d0
+           sigma_cnt_local(typeK) = sigma_cnt_local(typeK) + 1.0d0
+
+
+c          write(io7,*)typeJ,typeK,distance,sigma_local(1,typeJ),
+c    &sigma_local(1,typeK),sigma_cnt_local(typeJ),sigma_cnt_local(typeK)
 
 
            endif
@@ -367,6 +380,14 @@ ccccccccccccccccccccccccccccccccc
 
 
             do i = 1,bead_types
+
+                 if(ibonded.eq.1.and.iradius.eq.0) then
+
+                         sigma(1,i) = sigma_local(1,i)
+                         sigma_cnt(i) = sigma_cnt_local(i)
+
+                 endif
+
 
                 do j = 1,bead_types
 
@@ -400,6 +421,14 @@ ccccccccccccccccccccccccccccccccc
                  enddo
             
              enddo
+
+             if(ibonded.eq.1.and.iradius.eq.0) then
+         do i = 1, bead_types
+         if(bonded(i).ne.0) write(io7,*)'radius form connectivity for 
+     & bead',i,sigma(1,i)/sigma_cnt(i)
+         enddo
+
+             endif
 
 c             write(io7,*)'histogram for rdf calculation completed'
 

@@ -122,7 +122,7 @@ c      number of beads per molecule
        goto 2
 ccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c      bead pair connectivity
-       elseif(line(1:19).eq.'bead_pairs_molecule') then
+       elseif(line(1:17).eq.'bead_connectivity') then
 
        read(io00,*) ((bead_pair(i,j), j=1,bead_types), i=1,bead_types)
        write(io7,*) ((bead_pair(i,j), j=1,bead_types), i=1,bead_types)

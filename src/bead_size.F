@@ -42,12 +42,14 @@ c         sigma(2,i) = sigma(2,i)/(2.0d0*sigma_cnt(i))
             sigma(2,i) = sigma(1,i)**2
          elseif(bonded(i).eq.0) then
 
-                 do j = 1,max_binr
-                 tempr(j) = partialgr(i,i,j)
-                 enddo
+c                 do j = 1,max_binr
+c                 tempr(j) = partialgr(i,i,j)
+c                 enddo
 
-          sigma(1,i) = binr(maxloc(tempr,1))/2.0d0
-          sigma(2,i) = sigma(1,i)**2
+c          sigma(1,i) = binr(maxloc(tempr,1))/2.0d0
+c          sigma(2,i) = sigma(1,i)**2
+
+            sigma(1,i) = noa_bead(i)*0.2d0 
 
           endif
 
@@ -62,7 +64,7 @@ c         sigma(2,i) = sigma(2,i)/(2.0d0*sigma_cnt(i))
 
          std_dev(i) = dsqrt(sigma(2,i) - sigma(1,i)**2)
 
-         write(io7,*)'bead radius for',label_bead(i),'is',sigma(1,i)
+         write(io7,*)'bead radius for  ',label_bead(i),'is',sigma(1,i)
 
          enddo
 

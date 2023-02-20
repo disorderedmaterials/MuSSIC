@@ -49,7 +49,7 @@ c   initialize the bead size arrays to zero
 
          do i = 1,bead_types
 
-          if(iradius.eq.0.) then
+          if(iradius.eq.0..and.ibonded.eq.1) then
 
         
          sigma(1,i) = 0.0d0

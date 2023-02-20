@@ -30,7 +30,8 @@ C********************************
 C**** Read- trajectory file *****
 C********************************
 C**** Read configuration data ***
-        if(isubstitute.eq.1) then
+
+        if(isubstitute.eq.1.and.run_type.eq.'default') then
 
         do is = 1,num_iso
 

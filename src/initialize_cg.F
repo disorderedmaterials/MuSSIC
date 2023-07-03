@@ -133,7 +133,7 @@ c           if(run_type.eq.'default') then
             boxy1 = boxy
             boxz1 = boxz
 
-           write(io7,*)' sequence of the beads in the molecule'
+        write(io7,*)' sequence of the beads in the molecule'
 c read number of atoms
         read(io3,*)natoms
         if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then

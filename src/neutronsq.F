@@ -339,6 +339,8 @@ c     &*bcd(j))*multiplier
 
 c       d_unbound_wsq(i,j,k)=d_weightedsq(i,j,k)-d_bound_wsq(i,j,k)
 
+        d_weightedsq(i,j,k) = d_bound_wsq(i,j,k) + d_unbound_wsq(i,j,k)
+
        
        d_totalweightedsq(k) = d_totalweightedsq(k)+d_bound_wsq(i,j,k)+
      &d_unbound_wsq(i,j,k)
@@ -396,6 +398,8 @@ c write the weighted partial S(Q) to a file
 
 
                 open(unit = fu,file=trim(file_name),status='unknown')
+      write(fu,*)'#  Q(1/Angstroms)     partial weighted S(Q)
+     &partial weighted S(Q)-intra  partial weighted S(Q)-inter '
 
 
               do k = 1,wbins
@@ -406,6 +410,10 @@ c write the weighted partial S(Q) to a file
                enddo
         enddo
         enddo
+
+      write(fu1,*)'#  Q(1/Angstroms)        weighted S(Q)-total
+     &weighted S(Q)-intra         weighted S(Q)-inter '
+
 
         do i = 1,wbins
 

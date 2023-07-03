@@ -4,6 +4,7 @@ C
       integer istop  ! stop variable                                 
       integer ierror ! error variable  
       integer itraj
-      integer icgtraj      
-      common /contr/   istop, ierror,itraj,icgtraj            
+      integer icgtraj
+      integer ierr      
+      common /contr/   istop, ierror,itraj,icgtraj,ierr            
  

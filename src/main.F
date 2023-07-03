@@ -150,7 +150,7 @@ c   compare with F_CG(Q) by mapping atoms in the atomistic trajectory
 c   onto a CG bead   (refer documentation for deatils)
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc      
 
-      if(run_type.eq.'compare_CG')then
+      if(run_type.eq.'compare_CG'.or.run_type.eq.'atomistic')then
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -159,6 +159,18 @@ c  Scattering calculation from atomistic simulations starts here
       write(*,*)'******started F(Q) calculation using atomistic trajecto
      &ry*******'
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+c     ... 3 trajectory file
+
+      open (unit = io2, file = 'trajectory',  status = 'unknown',
+     $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
+      if (ios.ne.0) then
+             itraj = 0
+         write (io7,*) 'error: atomisitc trajectory does not exist'
+         stop
+c         istop=1
+      endif
+
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c initialize number of  histogram bins and vectors needed for F(Q) calculation
@@ -186,15 +198,17 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      &histogram for g(r) calculation'
 
 
+
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Loop over number of frames in atomisitc trajectory start here
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      do istep = 1,nframes
+c     do istep = 1,nframes
 
+       ierr = 0
 
-     
-      write(*,*)'frame:',istep
+      DO WHILE (ierr.eq.0)
+
 
 
 ccccccccccccccccccccccccccccccccccccccccccccc
@@ -202,6 +216,18 @@ c read configuration from the trajectory file
 ccccccccccccccccccccccccccccccccccccccccccccc
 
       call rdtraj
+
+      if(ierr.eq.0) then
+
+      nframes = nframes + 1
+     
+      write(*,*)'frame:',nframes
+
+      elseif(ierr.ne.0) then
+
+       exit
+
+      endif
 
       
 
@@ -277,11 +303,18 @@ c    perform the CG mapping following the mapping scheme given in model.dat
 
 c   - generates CG trajectory by grouping atoms in the atomistic trajectory into a CG bead 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+c     ... 4 CG trajectory file
+
+        if(run_type.eq.'compare_CG') then
+
+      open (unit = io3, file = 'CG_trajectory',  status = 'UNKNOWN',
+     $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
 
 
-        call cg_mapping
+             call cg_mapping
 
-       open (unit = io3, file = 'CG_trajectory',  status = 'UNKNOWN')
+        endif
+
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -289,19 +322,34 @@ c  Scattering calculation from atomistic simulations ends  here
       write(io7,*)'F(Q) calculation from atomistic trajectory completed'
       write(*,*)'F(Q) calculation from atomistic trajectory completed'
 
-
+      if(run_type.eq.'compare_CG') then
       write(*,*)'Generated CG trajectory following the mapping scheme
      &given in model file'
+      endif
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       
            
             endif     
+
+       if(run_type.eq.'default'.or.run_type.eq.'compare_CG')then
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Scattering calulcation on the coarse grain trajectory obtained from CG_mapping
       write(io7,*)'*****Started F_CG(Q) calculation using CG trajectory'
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc      
 
+c     ... 4 CG trajectory file
+
+      open (unit = io3, file = 'CG_trajectory',  status = 'UNKNOWN',
+     $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
+
+
+      if (ios.ne.0) then
+             icgtraj = 0
+         write (io7,*) 'error:CG trajectory does not exist'
+         stop
+c         istop=1
+      endif
         
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -319,18 +367,38 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       write(*,*)'Initialization of vectors for F(Q) completed'
       write(*,*)'Loop begins over number of frames to populate
      & histogram for g(r) calculation'
+
+
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Loop over number of frames in the CG trajectory starts here
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+       nframes = 0
+       
+        ierr = 0
 
-      do istep = 1,nframes
+      DO WHILE (ierr.eq.0)
 
-      write(*,*)'frame:',istep
+c        do istep = 1,nframes
+
+     
 ccccccccccccccccccccccccccccccccccccccccccccc
 c read configuration from the trajectory file
 ccccccccccccccccccccccccccccccccccccccccccccc      
 
       call rdtraj_cg
+
+      if(ierr.eq.0) then
+
+      nframes = nframes + 1
+
+      write(*,*)'frame:',nframes
+
+      elseif(ierr.ne.0) then
+
+       exit
+
+      endif
+
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     stops if the trajectory file is unavailable/incorrect
@@ -408,6 +476,8 @@ c  Scattering calculation on CG trajectory  ends  here
       write(io7,*)'*****calculation of F_CG(Q) on CG trajectory 
      &completed*******'
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+      endif
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc

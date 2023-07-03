@@ -37,7 +37,11 @@ C**** Read configuration data ***
 
         fu_1 = 120 + is
 
-        read(fu_1,*)natoms
+        read(fu_1,*,iostat=ierr)natoms
+
+
+        if(ierr.ne.0) goto 676
+
         if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
         read(fu_1,*)boxx,boxy,boxz
         else
@@ -66,7 +70,10 @@ c loop over number of atoms to read x, y and z cordinates
 
 
 c read number of beads
-        read(io3,*)natoms
+        read(io3,*,iostat=ierr)natoms
+
+        if(ierr.ne.0) goto 676
+
         if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
         read(io3,*)boxx,boxy,boxz
         else
@@ -146,5 +153,5 @@ c        do i = 1,bead_types
 c        write(io7,*)'natoms:',natoms,'bead type',i,'no. of beads',nr(i)
 c        enddo
         
- 
+676      continue 
       end 

@@ -101,6 +101,8 @@ c   write partial S(Q) and total F_CG(Q) to files
 
                 open(unit = fu,file=trim(file_name),status='unknown')
 
+      write(fu,*)'# Q(1/Angstroms)     partial unweighted S(Q)
+     &partial unweighted S(Q)-intra  partial unweighted S(Q)-inter '
 
 
               do k = 1,wbins
@@ -114,6 +116,8 @@ c   write partial S(Q) and total F_CG(Q) to files
         enddo
         enddo
 
+      write(io26,*)'# Q(1/Angstroms)        unweighted S(Q)-total
+     &unweighted S(Q)-intra         unweighted S(Q)-inter '
 
       do i = 1,wbins
 

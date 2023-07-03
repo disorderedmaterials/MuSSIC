@@ -15,9 +15,9 @@ C     System.Inc
 
 C vectors and matrixes sizes
       parameter (maxnatoms = 1000000)   ! max number of atoms
-      parameter (maxtyp = 10)   ! max number of atom types
-      parameter (maxbins = 10000) !max number of histogram bins     
-      parameter (maxnum = 10) ! max number of species
+      parameter (maxtyp = 15)   ! max number of atom types
+      parameter (maxbins = 35000) !max number of histogram bins     
+      parameter (maxnum = 15) ! max number of species
 C physical constants
       double precision PI
       parameter (PI = 3.14159 26535 89793 23846 26433 8d00)
@@ -46,9 +46,9 @@ C physical constants
 
       common/ sys8/ natural,isotope,iso_fraction
 
-      character*10 label_type(maxtyp)      
+      character*10 label_type(maxtyp),file_format      
       double precision t1,t2,t3
-      common/ sys9/ label_type
+      common/ sys9/ label_type,file_format
       common/tt/ t1,t2,t3
 
       integer*8 max_binr

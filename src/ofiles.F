@@ -26,7 +26,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'iochan.h'
       include 'control.inc'
 
-      integer ios
 
 c     ... 0 stderr (preconnected)
 c     checks on the files supposed to be already there
@@ -59,30 +58,6 @@ c   .... 2  model.dat
       endif
 
 
-c     ... 3 trajectory file 
 
-      open (unit = io2, file = 'trajectory',  status = 'unknown',
-     $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
-      if (ios.ne.0) then
-             itraj = 0 
-         write (io7,*) '* atomisitc trajectory does not exist'
-c         istop=1
-      endif
-
-      if(ierror.eq.1) then
-      write(io7,*)'error input file does not exist'
-      endif
-
-c     ... 4 CG trajectory file
-
-      open (unit = io3, file = 'CG_trajectory',  status = 'UNKNOWN',
-     $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
-
-
-      if (ios.ne.0) then
-             icgtraj = 0 
-         write (io7,*) 'CG trajectory does not exist'
-c         istop=1
-      endif
 
        end

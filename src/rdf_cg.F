@@ -425,7 +425,7 @@ ccccccccccccccccccccccccccccccccc
              if(ibonded.eq.1.and.iradius.eq.0) then
          do i = 1, bead_types
          if(bonded(i).ne.0) write(io7,*)'radius form connectivity for 
-     & bead',i,sigma(1,i)/sigma_cnt(i)
+     & bead',i,sigma(1,i)/(2.0d0*sigma_cnt(i))
          enddo
 
              endif

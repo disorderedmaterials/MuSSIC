@@ -33,7 +33,10 @@ c          if(iradius.eq.0.and.run_type.eq.'default') then
           if(iradius.eq.0) then
 
          if(bonded(i).ne.0) then
+
            sigma(1,i) = sigma(1,i)/sigma_cnt(i)
+
+           sigma(1,i) = sigma(1,i)/2.0d0
 
 c           write(*,*)i,sigma(1,i),sigma_cnt(i)
 

@@ -33,7 +33,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccc
      &iqdelta,iqmax,ibroadening,iFWHM,iwindowfn,ilabel,iex,ibc,i,j,
      &inum_iso,ibinning,iensemble,iFF_label
      
-   
+      nframes = 0   
       intypes = 0
       inframes = 0 
       icutoff = 0
@@ -89,10 +89,18 @@ c     number of atom types
          goto 1
       
 c     number of frames 
-      elseif (line(1:7) .eq. 'nframes') then
-         read (io1, *) nframes
-         inframes=1
-         goto 1
+c      elseif (line(1:7) .eq. 'nframes') then
+c         read (io1, *) nframes
+c         inframes=1
+c         goto 1
+
+c   input trajectory file format
+
+c       elseif (line(1:7) .eq. 'file_format') then
+c        read (io1, *) file_format
+c        ifile_format = 1
+c        goto 1
+
 c     length of the simulation box
       elseif (line(1:10) .eq. 'box_length') then
          read (io1, *) boxx,boxy,boxz

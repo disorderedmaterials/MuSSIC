@@ -101,6 +101,8 @@ c writes the partial S(Q) to a file named after the atom types
 
                 open(unit = fu,file=trim(file_name),status='unknown')
 
+      write(fu,*)'# Q(1/Angstroms)     partial unweighted S(Q)  
+     &partial unweighted S(Q)-intra  partial unweighted S(Q)-inter '
 
 
               do k = 1,wbins
@@ -116,7 +118,8 @@ c writes the partial S(Q) to a file named after the atom types
 
 ccccccccccccccccccccccccccc
 c write the values to file 
-
+      write(io16,*)'# Q(1/Angstroms)        unweighted S(Q)-total   
+     &unweighted S(Q)-intra         unweighted S(Q)-inter '
 
       do i = 1,wbins
 

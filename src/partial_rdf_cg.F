@@ -60,6 +60,8 @@ c writes the partial g(r) and total g(r) to the files
 
                 open(unit = fu,file=trim(file_name),status='unknown')
 
+      write(fu,*)'# r(Angstroms)              partial g(r)         part
+     &ial g(r) - intra         partial  g(r) - inter '
 
 
               do k = 1,max_binr
@@ -71,6 +73,7 @@ c writes the partial g(r) and total g(r) to the files
 
         enddo
         enddo
+      write(io24,*)'# r(Angstroms)            total g(r)'
 
       do i = 1,max_binr
 

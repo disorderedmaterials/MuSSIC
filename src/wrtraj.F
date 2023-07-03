@@ -52,15 +52,18 @@ C********************************
 C**** Read- trajectory file *****
 C********************************
 C**** Read configuration data ***
+         ierr = 0
 
-
-         do iframe = 1,nframes
+         do while(ierr.eq.0)
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c read number of atoms
          
         
-        read(io2,*)natoms
+        read(io2,*,iostat=ierr)natoms
+
+        if(ierr.ne.0) exit
+
         if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
         read(io2,*)boxx,boxy,boxz
         else

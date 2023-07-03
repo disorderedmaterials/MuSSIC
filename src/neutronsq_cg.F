@@ -94,12 +94,14 @@ ccccccccccccccccccccccccccccccccccc
                  do i = 1,bead_types
 
                  weight(i) = 0.0d0
+                 
 
                  do j = 1,bead_types
 
                  weight1(i,j) = 0.0d0
                  intra_weight(i,j)= 0.0d0
                  intra_norm(i,j) = 0.0d0
+                 
 
                  enddo
 
@@ -363,7 +365,6 @@ ccccccccccccccccccccccccccccccccccccccccccc
                              
              enddo
 
-                      
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  compute weights for the inter molecular scattering term                      
@@ -603,6 +604,7 @@ c weighted sum of partial S(Q) using the weights calculated above
        self_term(k) = self_term(k) + ((weight(i)*FF(i,k)**2)
      &*(1.0d0/avg_noa_bead))
 
+
  
 c       d_totalunboundsq(k)=d_totalunboundsq(k)+((weight(i)*FF(i,k)**2)
 c     &*(1.0d0/avg_noa_bead))
@@ -671,6 +673,8 @@ c  write partial S(Q) and F(Q) to the files
 
 
                 open(unit = fu,file=trim(file_name),status='unknown')
+      write(fu,*)'#  Q(1/Angstroms)     partial weighted S(Q)
+     &partial weighted S(Q)-intra  partial weighted S(Q)-inter '
 
 
               do k = 1,wbins
@@ -682,6 +686,9 @@ c  write partial S(Q) and F(Q) to the files
                enddo
         enddo
         enddo
+
+      write(fu1,*)'#  Q(1/Angstroms)        weighted S(Q)-total
+     &weighted S(Q)-intra         weighted S(Q)-inter  self-scattering '
 
         do i = 1,wbins
 

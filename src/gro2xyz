@@ -1,0 +1,76 @@
+      subroutine gro2xyz
+ccccccccccccccccccccccccccccccccccccccccccccc
+c     start_doc
+c     Name
+c       gro2xyz
+c     Usage
+c       call gro2xyz
+c     Description
+c       reads gro format trajectory  file and creates an xyz file
+c     end_doc
+cccccccccccccccccccccccccccccccccccccccccccccccc
+
+      implicit none
+      include 'system.inc'
+      include 'config.inc'
+      include 'control.inc'
+      include 'iochan.h'
+      
+      integer i
+      integer Resindex, Atomindex 
+      Character*5 labRes, labAtom(maxnatoms)     
+      real bx, by, bz
+                                             
+
+      open (unit = io22, file = 'conf.gro',  status = 'OLD',
+     $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
+      if (ios.ne.0) then
+         write (io7,*) '* FATAL input gro file does not exist'
+         istop=1
+      endif
+
+
+
+      open (unit = io2, file = 'trajectory',  status = 'unknown',
+     &      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
+    
+      ierr = 0
+
+      do while(ierr .eq. 0)
+
+      read(io22,*)
+      read(io22,*,iostat=ierr)natoms
+
+
+      if (ierr .eq. 0) then 
+      do i=1, natoms
+
+        read(io22,101) Resindex, labRes, labAtom(i), Atomindex, 
+     & x(i),y(i),z(i)
+
+      enddo
+      read(io22,*)bx,by,bz
+
+      write(io2,*) natoms
+      if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
+        write(io2,*)bx*10.0,by*10.0,bz*10.0
+        else
+        write(io2,*)
+        endif
+
+      do i =1,natoms
+      write(io2,*)labAtom(i)(1:1),x(i)*10.0,y(i)*10.0,z(i)*10.0
+      enddo
+      elseif (ierr .ne. 0) then
+
+       exit
+
+       endif
+
+      enddo
+
+       close(io22)
+       close(io2)
+101   format(i5, 2a5, i5, 3f8.4)
+
+      end

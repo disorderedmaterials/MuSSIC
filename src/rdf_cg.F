@@ -101,6 +101,8 @@ c                Dz = Dz - boxz* dble(Idint((Dz/boxz) +9999.5d0) - 9999)
 
                if(bin.le.max_binr.and.distance.le.cutoff) then
                hist_local(i,i,bin) = hist_local(i,i,bin)+1.0d0
+
+
                endif
 
 
@@ -169,8 +171,13 @@ c                Dz = Dz - boxz* dble(Idint((Dz/boxz) +9999.5d0) - 9999)
              bin = ceiling(distance/bin_width)
 
 
-       if(bin.le.max_binr.and.distance.le.cutoff)
-     &hist_local(ii,jj,bin)=hist_local(ii,jj,bin)+1.0d0
+       if(bin.le.max_binr.and.distance.le.cutoff)then
+
+         hist_local(ii,jj,bin)=hist_local(ii,jj,bin)+1.0d0
+
+
+
+       endif
 
              enddo
 
@@ -287,11 +294,13 @@ c                       write(io7,*)i,nmol(i),bl,el
 
                        
 
-                      do jj = bl,el-1
+                      do jj = bl,el
 
                        typeJ = itype(jj)
 
-                       do kk = jj+1,el
+                       do kk = bl,el
+
+                       if(jj.ne.kk) then
 
                        typeK = itype(kk)
 
@@ -361,6 +370,8 @@ c    &sigma_local(1,typeK),sigma_cnt_local(typeJ),sigma_cnt_local(typeK)
 
            endif
 
+           endif
+
           enddo
 
           enddo
@@ -390,6 +401,14 @@ ccccccccccccccccccccccccccccccccc
 
 
                 do j = 1,bead_types
+
+                if(i.eq.j) then
+
+         do k =1,max_binr
+         bound_hist_local(i,j,k) = 0.5d0*bound_hist_local(i,j,k)
+         enddo
+
+         endif
 
                  
              if(i.gt.j) then

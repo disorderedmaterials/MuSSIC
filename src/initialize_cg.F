@@ -22,7 +22,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'sq.inc'
       include 'neutronsq.inc'
 
-      integer*8 ii,jj,l,i,j,k,typej,typek,temp
+      integer*8 ii,jj,l,p,i,j,k,typej,typek,temp
          double precision delta,minimum,boxx1,boxy1,boxz1
 
 c     ... 5 total unweighted g(r)
@@ -127,7 +127,6 @@ c   define the bin values for Q-space depending on the binning regime
 cccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  finding the sequence of the beads in the molecule             
 
-c           if(run_type.eq.'default') then               
 
             boxx1 = boxx
             boxy1 = boxy
@@ -142,6 +141,7 @@ c read number of atoms
         read(io3,*)
         endif
         l = 0
+        p = 0
 
         do ii = 1,num
 
@@ -152,6 +152,7 @@ c        write(io7,*)'molecule',ii,'with beads:', nbd(ii)
 c loop over number of atoms to read x, y and z cordinates
         do i = 1,nbd(ii)
         l = l + 1
+        mol_num(l) = jj + p 
         read(io3,*)label_atom(l),x(l),y(l),z(l)
 
         if (jj.eq.1)then
@@ -164,6 +165,8 @@ c        write(io7,*)label(ii,i)
         enddo
 
              enddo
+
+             p = p + nmol(ii)
 
         enddo
 

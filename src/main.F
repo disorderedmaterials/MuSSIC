@@ -125,6 +125,15 @@ ccccccccccccccccccccccccccccccccccccccccccccc
 
       write(*,*)'read model.dat file successfully'
 
+cccccccccccccccccccccccccccccccccccccccccccccccc
+c  convert the trajectory if xyz is not present 
+ccccccccccccccccccccccccccccccccccccccccccccccc
+
+c      if(traj_format.eq.'gro') then
+
+c              call gro2xyz
+
+c       endif
 ccccccccccccccccccccccccccccccccccccccccccccccccc      
 c stops if there is any missing/wrong model data
 ccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -141,16 +150,17 @@ cccccccccccccccccccccccc
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-c  check whether the run type is 'default' or 'CG_compare'
+c  check whether the run type is 'atomisitc' or 'CG' or 'CG_compare_atomisitc' (refer documentation for detals)
 c
-c   if  'default' computes  F_CG(Q) for the given CG_trajectory  (refer documentation for details)
+c  'atomistic' computes  F_CG(Q) for the given  atomistic trajectory
 c
-c   if  'compare_CG' compute F(Q) for refernce atomisic simulation and
-c   compare with F_CG(Q) by mapping atoms in the atomistic trajectory
-c   onto a CG bead   (refer documentation for deatils)
+c  'CG' computes  F_CG(Q) for the given CG_trajectory
+c
+c  'compare_CG_atomistic' compute F(Q) for refernce atomisic simulation and compare with F_CG(Q) by mapping atoms in the atomistic trajectory onto a CG bead   
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc      
 
-      if(run_type.eq.'compare_CG'.or.run_type.eq.'atomistic')then
+      if(run_type.eq.'compare_CG_atomistic'.or
+     & .run_type.eq.'atomistic')then
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -178,18 +188,6 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
        call initialize
      
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-c   if isotope susbstitution is manually done, write the trajectory
-c   and reinitialize the arrays
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-
-        if(isubstitute.eq.1) then
-         call wrtraj
-          
-       
-         call reinitialize
-        endif
-
        
        
       write(*,*)'Initialization of vectors for F(Q) completed'
@@ -291,11 +289,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       write(*,*)'Weighted S(Q) computed'
  
-        fu_1 = 120+num_iso       
  
        close(io2)
 
-      if(isubstitute.eq.1) close(fu_1)
       
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -305,7 +301,7 @@ c   - generates CG trajectory by grouping atoms in the atomistic trajectory into
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     ... 4 CG trajectory file
 
-        if(run_type.eq.'compare_CG') then
+        if(run_type.eq.'compare_CG_atomistic') then
 
       open (unit = io3, file = 'CG_trajectory',  status = 'UNKNOWN',
      $      iostat=ios, access = 'SEQUENTIAL', form = 'FORMATTED')
@@ -322,7 +318,7 @@ c  Scattering calculation from atomistic simulations ends  here
       write(io7,*)'F(Q) calculation from atomistic trajectory completed'
       write(*,*)'F(Q) calculation from atomistic trajectory completed'
 
-      if(run_type.eq.'compare_CG') then
+      if(run_type.eq.'compare_CG_atomistic') then
       write(*,*)'Generated CG trajectory following the mapping scheme
      &given in model file'
       endif
@@ -331,7 +327,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
            
             endif     
 
-       if(run_type.eq.'default'.or.run_type.eq.'compare_CG')then
+       if(run_type.eq.'CG'.or.run_type.eq.'compare_CG_atomistic')then
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c  Scattering calulcation on the coarse grain trajectory obtained from CG_mapping
@@ -358,10 +354,6 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       call initialize_cg
 
 
-        if(isubstitute.eq.1.and.run_type.eq.'default') then
-         call wrtraj_cg                 
-         call reinitialize_cg
-        endif
 
       
       write(*,*)'Initialization of vectors for F(Q) completed'

@@ -6,7 +6,6 @@
       include 'control.inc'
       include 'config.inc'
       include 'model.inc'
-      include 'manual.inc'
 
 
       integer*8 i,ii,j,jj,k,kk,iii,l,total_beads,ndxaux,sel,temp1,
@@ -22,49 +21,13 @@ C**** Read- trajectory file *****
 C********************************
 C**** Read configuration data ***
 
-         if(isubstitute.eq.1) then
-                 fu_1 = 120+num_iso
-                
-
-       open (unit = fu_1, file = filename1,  status = 'unknown')
-          else
        open (unit = io2, file = 'trajectory',  status = 'unknown')
 
-         endif
 
          total_beads = 0
 
           do iii = 1,nframes
 
-          if(isubstitute.eq.1) then
-
-c read number of atoms
-        read(fu_1,*)natoms
-        if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
-        read(fu_1,*)boxx,boxy,boxz
-        else
-        read(fu_1,*)
-        endif
-
-        l = 0
-        do ii = 1,num
-
-             do jj = 1,nmol(ii)
-
-
-c loop over number of atoms to read x, y and z cordinates
-        do i = 1,nat(ii)
-        l = l + 1
-        read(fu_1,*)label_atom(l),x(l),y(l),z(l)
-
-        enddo
-
-        enddo
-
-        enddo
-
-
-           else
 
 c read number of atoms
         read(io2,*)natoms
@@ -92,7 +55,6 @@ c loop over number of atoms to read x, y and z cordinates
 
         enddo
 
-         endif
 
 
 
@@ -421,12 +383,8 @@ c                  bead_z(l) = boz
             write(io7,*)'cg mapping completed'           
 
           
-           if(isubstitute.eq.1) then
-            close(fu_1)
-            else           
 
            close(io2)
-            endif
            close(io3)
 
          end 

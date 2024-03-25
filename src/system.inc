@@ -46,9 +46,9 @@ C physical constants
 
       common/ sys8/ natural,isotope,iso_fraction
 
-      character*10 label_type(maxtyp),file_format      
+      character*10 label_type(maxtyp),traj_format      
       double precision t1,t2,t3
-      common/ sys9/ label_type,file_format
+      common/ sys9/ label_type,traj_format
       common/tt/ t1,t2,t3
 
       integer*8 max_binr

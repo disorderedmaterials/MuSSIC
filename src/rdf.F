@@ -22,7 +22,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'iochan.h'
       include 'rdf.inc'
       include 'model.inc'
-      include 'manual.inc'
 
       integer*8 temp,temp1,temp2,ii,jj,kk,i,j,k,bin,bl,el,
      &typeJ,typeK,bl_init
@@ -66,7 +65,7 @@ c$omp& shared (i,rr, temp, boxx, boxy, boxz, bin_width, nbins)
 c$omp& shared (max_binr, cutoff)
 c$omp& private (j,k,Dx,Dy,Dz,distance,bin )
 
-c$omp do reduction ( + : hist_local )
+c$omp do reduction ( + : hist_local)
 
 
              do j = 1,temp-1
@@ -96,6 +95,7 @@ c                Dz = Dz - boxz* dble(Idint((Dz/boxz) +9999.5d0) - 9999)
 
                if(bin.le.max_binr.and.distance.le.cutoff) then
                hist_local(i,i,bin) = hist_local(i,i,bin)+1.0d0
+
                endif
 
                       enddo
@@ -106,12 +106,7 @@ c$omp end do
 c$omp end parallel
 
                    
-
          enddo
-
-       
-
-       
 
 c        write(io7,*)'histogram for self terms taken'
 
@@ -150,7 +145,6 @@ C     Nearest Image   C
 Ccccccccccccccccccccccc
                 Dx = Dx - boxx*nint(Dx/boxx)
                 Dy = Dy - boxy*nint(Dy/boxy)
-                Dy = Dy - boxy*nint(Dy/boxy)
                 Dz = Dz - boxz*nint(Dz/boxz)
 
 
@@ -163,13 +157,14 @@ c                Dz = Dz - boxz* dble(Idint((Dz/boxz) +9999.5d0) - 9999)
 
              bin = ceiling(distance/bin_width)
 
-       if(bin.le.max_binr.and.distance.le.cutoff)
-     &hist_local(ii,jj,bin)=hist_local(ii,jj,bin)+1.0d0
+       if(bin.le.max_binr.and.distance.le.cutoff) then
+          hist_local(ii,jj,bin)=hist_local(ii,jj,bin)+1.0d0
+
+       endif
 
              enddo
 
              enddo
-
 
 c$omp end do
 
@@ -226,18 +221,16 @@ Ccccccccccccccccccccccc
                 Dx = Dx - boxx*nint(Dx/boxx)
                 Dy = Dy - boxy*nint(Dy/boxy)
                 Dz = Dz - boxz*nint(Dz/boxz)
+ 
 
                 xpbc(jj) = xpbc(jj-1) +Dx
                 ypbc(jj) = ypbc(jj-1) +Dy
                 zpbc(jj) = zpbc(jj-1) +Dz
 
 
-
-
                 enddo
 
              enddo
-
 
              enddo
 
@@ -255,25 +248,25 @@ Ccccccccccccccccccccccc
 
                 endif
 
-
-c$omp parallel 
-c$omp& shared ( i,nmol,nat,itype,boxx,boxy,boxz,bin_width,nbins) 
+c$omp parallel
+c$omp& shared ( i,nmol,nat,itype,boxx,boxy,boxz,bin_width,nbins)
 c$omp& shared (xpbc,ypbc,zpbc,max_binr,cutoff,bl_init)
-c$omp& private ( j,bl,el,jj,kk,typeJ,typeK,Dx,Dy,Dz,distance,bin ) 
+c$omp& private ( j,bl,el,jj,kk,typeJ,typeK,Dx,Dy,Dz,distance,bin )
 
 c$omp do  reduction ( + : bound_hist_local )
 
                   do j = 1,nmol(i)
 
-
                        bl = ((j-1)*nat(i))+1+bl_init
                        el = bl+nat(i)-1
 
-                      do jj = bl,el-1
+                      do jj = bl,el
 
                        typeJ = itype(jj)
 
-                       do kk = jj+1,el
+                       do kk = bl,el
+
+                            if(jj.ne.kk) then
 
                        typeK = itype(kk)
 
@@ -281,37 +274,24 @@ c$omp do  reduction ( + : bound_hist_local )
                      Dy = ypbc(kk) - ypbc(jj)
                      Dz = zpbc(kk) - zpbc(jj)
 
-Ccccccccccccccccccccccc
-C     Nearest Image   C
-Ccccccccccccccccccccccc
-                  
-c                Dx = Dx - boxx*nint(Dx/boxx)
-c                Dy = Dy - boxy*nint(Dy/boxy)
-c                Dz = Dz - boxz*nint(Dz/boxz)
-
-c                Dx = Dx - boxx* dble(Idint((Dx/boxx) +9999.5d0) - 9999)
-c                Dy = Dy - boxy* dble(Idint((Dy/boxy) +9999.5d0) - 9999)
-c                Dz = Dz - boxz* dble(Idint((Dz/boxz) +9999.5d0) - 9999)
-
 
              distance = dsqrt(Dx**2+Dy**2+Dz**2)
 
 
              bin = ceiling(distance/bin_width)
 
-
-          
           if(distance.le.cutoff) then
           bound_hist_local(typeJ,typeK,bin)=
      &  bound_hist_local(typeJ,typeK,bin)+1.0d0
-        
+
+          endif
+
           endif
 
           enddo
 
           enddo
 
-            
            enddo
 
 
@@ -321,20 +301,24 @@ c$omp end parallel
 
           enddo
 
-
 cccccccccccccccccccccccccccccccccccccc
 c normalization of the histogram bins
 cccccccccccccccccccccccccccccccccccccc          
 
-
 c        write(io7,*)'histogram for inter molecular terms taken'
-
-
+                
             do i = 1,ntypes
 
                 do j = 1,ntypes
 
 
+         if(i.eq.j) then
+
+         do k =1,max_binr
+         bound_hist_local(i,j,k) = 0.5d0*bound_hist_local(i,j,k)
+         enddo
+
+         endif
                   if(i.gt.j) then
 
                           do k =1,max_binr
@@ -344,17 +328,20 @@ c        write(io7,*)'histogram for inter molecular terms taken'
 
                     endif
 
+
+
+
                        
 
                     do k = 1,max_binr
 
-              
-       histogram(i,j,k)=histogram(i,j,k)+ hist_local(i,j,k)
-     &/((nr(i)*nr(j))/(boxx*boxy*boxz))
-       bound_hist(i,j,k)=bound_hist(i,j,k)+ bound_hist_local(i,j,k)
+
+       histogram(i,j,k)=histogram(i,j,k)+ (hist_local(i,j,k))
      &/((nr(i)*nr(j))/(boxx*boxy*boxz))
 
-      
+       bound_hist(i,j,k)=bound_hist(i,j,k)+(bound_hist_local(i,j,k))
+     &/((nr(i)*nr(j))/(boxx*boxy*boxz))
+
 
         unbound_hist(i,j,k) = histogram(i,j,k)-bound_hist(i,j,k)
                  
@@ -365,7 +352,5 @@ c        write(io7,*)'histogram for inter molecular terms taken'
              enddo
 
 
-c             deallocate(hist_local)
-c             deallocate(bound_hist_local)
 
               end

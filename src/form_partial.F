@@ -21,9 +21,8 @@
 
                      lower_shell_limit = 0.0d0
 
-c                     number_density = nr(j)/(boxx*boxy*boxz)
 
-        if(i .eq.j) then
+      if(i .eq.j) then
         multiplier = 2.0d0
         else
         multiplier = 1.0d0
@@ -38,7 +37,6 @@ c                     number_density = nr(j)/(boxx*boxy*boxz)
         shell_volume =(4.0d0/3.0d0)*PI*((lower_shell_limit+bin_width)**3
      & -lower_shell_limit**3)
 
-c        factor = nr(i)*shell_volume*number_density
 
          if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
 

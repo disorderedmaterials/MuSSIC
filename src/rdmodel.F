@@ -68,22 +68,11 @@ c     size of molecules
          inat=1
          goto 2
 
-ccccccccccccccccccccccccccccccccccccccccccccccccc      
-c      labels of the atoms in molecules in sequence
-      elseif (line(1:14) .eq. 'sequence_atoms') then
-              write(io7,*)'label of atoms in sequence'
-               do i = 1,num
-                 do j = 1,nat(i)
-                     read(io00,*)label(i,j)
-                     write(io7,*)label(i,j)
-                  enddo
-               enddo
-         ilabel=1
-         goto 2
 
 cccccccccccccccccccccccccccccccccccccccccccccccccc         
 c     number of CG bead types  
-       elseif(line(1:16).eq.'num_CGbead_types') then
+       elseif(line(1:16).eq.'num_CGbead_types'.and.run_type.ne.
+     & 'atomistic') then
        read(io00,*)bead_types
        write(io7,*)'number of CG bead types:',bead_types
        goto 2
@@ -91,7 +80,8 @@ c     number of CG bead types
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     label of the bead type
-       elseif(line(1:10).eq.'label_bead') then
+       elseif(line(1:10).eq.'label_bead'.and.run_type.ne.
+     &'atomistic')then
        write(io7,*)'label of the bead types'
        do i = 1,bead_types
        read(io00,*)lbl_bdtyp(i),label_bead(i)
@@ -102,7 +92,8 @@ c     label of the bead type
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     raidus of the bead
-       elseif(line(1:11).eq.'bead_radius') then
+       elseif(line(1:11).eq.'bead_radius'.and.run_type.ne.
+     & 'atomistic')then
        write(io7,*)'raidus of the bead types'
        iradius = 1
        do i = 1,bead_types
@@ -113,7 +104,8 @@ c     raidus of the bead
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccc       
 c      number of beads per molecule
-       elseif(line(1:18).eq.'beads_per_molecule') then
+       elseif(line(1:18).eq.'beads_per_molecule'.and.run_type.ne.
+     &'atomistic') then
        write(io7,*)'number of beads per molecule'
        do i = 1,num
        read(io00,*)nbd(i)
@@ -122,7 +114,8 @@ c      number of beads per molecule
        goto 2
 ccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c      bead pair connectivity
-       elseif(line(1:17).eq.'bead_connectivity') then
+       elseif(line(1:17).eq.'bead_connectivity'.and.run_type.ne.
+     & 'atomistic') then
 
        read(io00,*) ((bead_pair(i,j), j=1,bead_types), i=1,bead_types)
        write(io7,*) ((bead_pair(i,j), j=1,bead_types), i=1,bead_types)
@@ -146,7 +139,8 @@ c      bead pair connectivity
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccc       
 c      number of atom types in CG bead  and the number of atoms of each atom type    
-       elseif(line(1:21).eq.'num_atom_types_CGbead')then
+       elseif(line(1:21).eq.'num_atom_types_CGbead'.and.run_type.ne.
+     & 'atomistic')then
        write(io7,*)'number of atoms types per CG bead'
        do i = 1,bead_types
        noa_bead(i) = 0.0d0
@@ -165,7 +159,8 @@ c      number of atom types in CG bead  and the number of atoms of each atom typ
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccc       
 c      CG mapping model to convert atomistic to CG trajectory
 
-       elseif(line(1:10).eq.'cg_mapping')then
+       elseif(line(1:10).eq.'cg_mapping'.and.run_type.ne.
+     & 'atomistic')then
        do i = 1,num
        read(io00,*)
        write(io7,*)'molecule:',i
@@ -204,6 +199,8 @@ c     unrecognised line
       endif
 200    continue
 
+         if(run_type.ne.'atomistic') then
+
         if(iradius.eq.0.and.ibonded.eq.0) then
 
          write(io7,*)'Error: no input for bead radius'
@@ -212,6 +209,8 @@ c     unrecognised line
 
          stop
          endif
+
+       endif
 
 
       return

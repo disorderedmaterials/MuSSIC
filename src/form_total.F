@@ -32,14 +32,9 @@
        total_factor = (real(nr(i)*nr(j))/real(natoms)**2)*multiplier
 
 
-      
-
-
-              do k = 1,n_bins
+               do k = 1,n_bins
 
                data2(k) = data2(k) +(data1(i,j,k)*total_factor)
-
-
 
                enddo
 

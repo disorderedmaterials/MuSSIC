@@ -29,7 +29,6 @@ c    normalize the bead size
 
          do i = 1,bead_types
 
-c          if(iradius.eq.0.and.run_type.eq.'default') then
           if(iradius.eq.0) then
 
          if(bonded(i).ne.0) then
@@ -59,7 +58,7 @@ c          sigma(2,i) = sigma(1,i)**2
            endif
 
          
-         if(run_type.eq.'compare_CG') then
+         if(run_type.eq.'compare_CG_atomistic') then
 
           sigma(1,i) = sigma_rmsd(1,i)
 

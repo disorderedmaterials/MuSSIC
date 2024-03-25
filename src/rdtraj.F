@@ -20,7 +20,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
       include 'control.inc'
       include 'iochan.h'
       include 'model.inc'
-      include 'manual.inc'
 
       integer*8 temp,i,j,l,ii,jj,fu_1,is
 
@@ -33,44 +32,6 @@ C**** Read configuration data ***
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc        
 c read number of atoms
-
-
-
-        if(isubstitute.eq.1) then
-
-        do is = 1,num_iso
-
-        fu_1 = 120 + is
-
-        read(fu_1,*,iostat=ierr)natoms
-
-                if (ierr.ne.0) goto 678
-
-        if(ensemble_type.eq.'NPT'.or.ensemble_type.eq.'npt')then
-        read(fu_1,*)boxx,boxy,boxz
-        else
-        read(fu_1,*)
-        endif
-
-        l = 0
-        do ii = 1,num
-
-             do jj = 1,nmol(ii)
-
-c loop over number of atoms to read x, y and z cordinates
-        do i = 1,nat(ii)
-        l = l + 1
-        read(fu_1,*)label_atom(l),x(l),y(l),z(l)
-
-        enddo
-
-        enddo
-
-        enddo
-
-        enddo
-
-         else
 
 
         read(io2,*,iostat=ierr) natoms
@@ -91,6 +52,7 @@ c loop over number of atoms to read x, y and z cordinates
 c loop over number of atoms to read x, y and z cordinates
         do i = 1,nat(ii)
         l = l + 1
+        
         read(io2,*)label_atom(l),x(l),y(l),z(l)
 
         enddo
@@ -100,7 +62,6 @@ c loop over number of atoms to read x, y and z cordinates
         enddo
 
 
-        endif
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc          
 c initialize the nr to zeros ( matrix giving the number of atoms per atom type)  
@@ -138,6 +99,8 @@ c   number of bins for rdf calculation
 cccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c prepare coordinate matrix according to the atom type
 
+         
+
          do i = 1,natoms
 
               do j = 1,ntypes
@@ -154,24 +117,15 @@ c matrix rr(atom type 'i',nunber of atoms of type 'i', position coordinate)
               rr(j,temp,2) = y(i)
               rr(j,temp,3) = z(i)
 
+              nmol_label(j,temp) = mol_num(i)
+
+              
               endif
 
             enddo
 
         enddo
 
-c          do i = 1,ntypes
-c         do j = 1,nr(i)
-c          write(io7,*)i,j,rr(i,j,1),rr(i,j,2),rr(i,j,3)
-c          enddo
-c          enddo
-
-         
-              
-
-
-
-c        write(io7,*)'reading atomistic trajectory'
 678       continue
     
           end 

@@ -21,9 +21,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccc
       include 'rdf.inc'
       include 'sq.inc'
       include 'neutronsq.inc'
-c      include 'manual.inc'
 
-      integer*8 ii,jj,l,i,j,k,typej,typek,temp
+      integer*8 ii,jj,l,p,i,j,k,typej,typek,temp
          double precision delta,minimum,boxx1,boxy1,boxz1
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc         
@@ -192,6 +191,7 @@ c read number of atoms
         endif
 
         l = 0
+        p = 0
         do ii = 1,num
 
              do jj = 1,nmol(ii)
@@ -200,6 +200,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c loop over number of atoms to read x, y and z cordinates
         do i = 1,nat(ii)
         l = l + 1
+        mol_num(l) = jj+p
+
         read(io2,*)label_atom(l),x(l),y(l),z(l)
 
         if (jj.eq.1) label_at(ii,i) = label_atom(l)
@@ -207,6 +209,8 @@ c loop over number of atoms to read x, y and z cordinates
         enddo
 
         enddo
+
+        p = p + nmol(ii)
 
         enddo
 
@@ -306,23 +310,6 @@ c   Assign  the  values of ratio of isotope to that atom type
 
                 enddo
 
-
-c            if(isubstitute.eq.1) then
-c               do i = 1,num_iso
-
-c           file_id = text2(i)
-
-
-c         filename1= 'trajectory' // trim(adjustl(file_id))
-
-c          fu_1 = 30+num_iso
-
-c          open(unit = fu_1,file=trim(filename1),status='unknown')
-
-c          enddo
-
-c           endif
-              
 
 
                end

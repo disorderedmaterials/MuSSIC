@@ -53,7 +53,6 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccc
       ibinning = 0
       iensemble = 0
       iFF_label = 0
-      isubstitute = 0
 
 1     read (io1, '(a80)', end = 100, 
      $err = 900) line
@@ -61,16 +60,28 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccc
 c     run type
       if (line(1:3) .eq. 'run') then
          read(io1,*) run_type
-         if(run_type.eq.'default'.and.icgtraj.eq.0) then
+         if(run_type.eq.'CG'.and.icgtraj.eq.0) then
          write(io7,*)'Error: CG trajectory not provided'
          stop
          endif
 
-         if(run_type.eq.'compare_CG'.and.itraj.eq.0) then
+      if((run_type.eq.'atomistic'.or.run_type.eq.'compare_CG_atomistic')
+     &.and.itraj.eq.0) then
          write(io7,*)'Error: atomistic trajectory not provided'
          stop
          endif
          goto 1
+
+c     input trajectory format
+
+c      elseif(line(1:11).eq.'traj_format') then
+
+c        read(io1,*)traj_format
+
+c        if(traj_format.ne.'xyz'.and.traj_format.ne.'gro') then
+c           write(io7,*)'Error: invalid format of the trajectory'
+c       endif
+c       goto 1
 
 c     number of processors
       elseif (line(1:5) .eq. 'nproc') then
@@ -182,16 +193,16 @@ c    isotpe details in each isotopologue
 
 c   isotopic substitution
 
-       elseif(line(1:21).eq.'isotopic_substitution') then
-               read(io1,*)iso_sub
-        if(iso_sub.eq.'manual') then
-                isubstitute = 1
-        else
-                isubstitute = 0
+c       elseif(line(1:21).eq.'isotopic_substitution') then
+c               read(io1,*)iso_sub
+c        if(iso_sub.eq.'manual') then
+c                isubstitute = 1
+c        else
+c                isubstitute = 0
 
-        endif
+c        endif
 
-        goto 1
+c        goto 1
 
 
 c     minimum value of Q range

@@ -1,5 +1,5 @@
 run:
-default
+CG
 nproc:
 20
 title:
@@ -42,8 +42,6 @@ HC       1.0      0.0
 BR       1.0      0.0
 OW       1.0      0.0
 HW       0.0      1.0
-isotopic_substitution
-ratios
 qmin:
 0.02d0
 qdelta:

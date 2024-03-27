@@ -18,7 +18,7 @@ The userguide 'MuSSIC_user_guide' provide details on compilation, input files an
 -----
 # User guide
 -----
-Detailed user guide together with example input files is available [here]([https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_user_guide_v1.1.pdf])
+Detailed user guide together with example input files is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_user_guide_v1.1.pdf)
 
 MuSSIC is wriiten in FORTRAN and requires gfortran compiler with openmp support for parallel implementation. 
 

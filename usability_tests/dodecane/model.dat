@@ -1,0 +1,63 @@
+num_species
+1
+nmol_species
+1600
+size_per_species
+38
+num_CGbead_types
+2
+label_bead
+1	CE
+2       C3
+beads_per_molecule
+4
+bead_radius
+1.63
+1.57
+num_atom_types_CGbead
+3
+1     1
+2     2
+3     7
+2
+2     3
+3     6
+cg_mapping
+1
+3
+1        1       1
+CE      10
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+1       2      9
+C3      9
+11
+12
+13
+14
+15
+16
+17
+18
+19
+1       1       1
+CE      10
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+endinput

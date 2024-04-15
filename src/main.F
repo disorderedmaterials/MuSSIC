@@ -57,7 +57,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
       
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-      write(*,*)'Scattering calculation: version 1.0 (26-01-2023) '
+      write(*,*)'Scattering calculation: version 1.1 (15-04-2024) '
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
  
@@ -132,6 +132,10 @@ ccccccccccccccccccccccccccccccccccccccccccccccc
 c      if(traj_format.eq.'gro') then
 
 c              call gro2xyz
+
+c      elseif(traj_format.eq.'pdb') then
+
+c              call pdb2xyz
 
 c       endif
 ccccccccccccccccccccccccccccccccccccccccccccccccc      

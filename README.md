@@ -18,11 +18,11 @@ The userguide 'MuSSIC_user_guide' provide details on compilation, input files an
 -----
 # User guide
 -----
-Detailed user guide together with example input files is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_user_guide_v1.1.pdf)
+A detailed user guide together with example input files is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_user_guide_v1.1.pdf)
 
-MuSSIC is wriiten in FORTRAN and requires gfortran compiler with openmp support for parallel implementation. 
+MuSSIC is written in FORTRAN and requires gfortran compiler with openmp support for parallel implementation. 
 
-Compile the code by typing 'make' in the sourcecode and copy the executable 'scattcg' to the desired folder to run the simulations
+Compile the code by typing 'make' in the source code and copy the executable 'scattcg' to the desired folder to run the simulations
 
 >make
 
@@ -36,7 +36,8 @@ Compile the code by typing 'make' in the sourcecode and copy the executable 'sca
 # Documentation
 -------------
 
-Documentation on the neutron scattering calculation for coarse grained simulations and validation tests is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_documentation.pdf).
+Documentation on the neutron scattering calculation for coarse-grained simulations and validation tests is available [here](https://github.com/disorderedmaterials/MuSSIC/blob/master/MuSSIC_documentation.pdf).
 
-Documentation on the tests from coarse-grained simulations is a work in progess. Details will be added as the work progresses.
+Documentation on the tests from coarse-grained simulations is a work in progress. Details will be added as the work progresses.
+SANS data is made available for the usability tests 'SDS' and 'CTAB' surfactant systems 
 
